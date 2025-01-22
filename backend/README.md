@@ -8,11 +8,11 @@
 
 ### Have a JDK of at least version 17: [Download Java](https://www.oracle.com/java/technologies/downloads/)
 
-> Open the terminal:  	`\CPS410-Project\>`
+> Open the terminal:  	`\CPS498-Project\>`
 
-> Run the following: `\CPS410-Project\> cd backend`
+> Run the following: `\CPS498-Project\> cd backend`
 
-> then: `\CPS410-Project\backend> .\mvnw spring-boot:run`
+> then: `\CPS498-Project\backend> .\mvnw spring-boot:run`
 
 > SpringBoot is running if you see the following:
 
