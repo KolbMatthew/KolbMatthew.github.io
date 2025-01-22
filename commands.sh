@@ -2,9 +2,10 @@
 
 # define variables
 ROOT_PROJECT_DIR="$HOME"
-PROJECT_DIR="$HOME/CPS410-Project/"
+PROJECT_DIR="$HOME/CPS498-Project/"
 LOGS_DIR="$ROOT_PROJECT_DIR/logs"
 DATABASE_URL="jdbc:mysql://main-mindracersdb.cz8i8mg60nru.us-east-2.rds.amazonaws.com:3306/mindracers_database"
+GIT_REPO_URL="https://github.com/Adderflight/CPS498-Project.git"
 
 # log directories
 mkdir -p $LOGS_DIR
@@ -47,7 +48,7 @@ case $choice in
         touch $LOGS_DIR/backend-start.log
         touch $LOGS_DIR/backend-stop.log
 
-        git clone https://github.com/thomasalfano/CPS410-Project.git
+        git clone $GIT_REPO_URL
         ;;
     3)# Run steps 1-2
         printf "\nRunning steps 1-2\n\n"
@@ -57,7 +58,7 @@ case $choice in
 
         printf "\nCloning git repository\n\n"
         mkdir -p $ROOT_PROJECT_DIR
-        git clone https://github.com/thomasalfano/CPS410-Project.git
+        git clone $GIT_REPO_URL
         ;;
     4)# Start frontend
         printf "\nStarting frontend using npm and caddy\n\n"
