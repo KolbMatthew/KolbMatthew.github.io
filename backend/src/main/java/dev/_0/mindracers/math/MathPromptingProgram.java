@@ -79,21 +79,22 @@ public class MathPromptingProgram {
             num1 = random.nextInt(90) + 11; // Avoid numbers 1-10
             num2 = random.nextInt(90) + 11; // Avoid numbers 1-10
             operation = random.nextInt(2) + 2;  // Multiplication or Division
+        }
 
         int correctAnswer;
-            if (operation == 0) {
-                correctAnswer = num1 + num2;
-            } else if (operation == 1) {
-                correctAnswer = num1 - num2;
-            } else if (operation == 2) {
-                correctAnswer = num1 * num2;
-            } else {
-                while (num1 % num2 != 0) {
-                    num1 = random.nextInt(90) + 11; // Avoid easy division
-                    num2 = random.nextInt(90) + 11; // Avoid easy division
-                }
-                correctAnswer = num1 / num2;
+        if (operation == 0) {
+            correctAnswer = num1 + num2;
+        } else if (operation == 1) {
+            correctAnswer = num1 - num2;
+        } else if (operation == 2) {
+            correctAnswer = num1 * num2;
+        } else {
+            while (num1 % num2 != 0) {
+                num1 = random.nextInt(90) + 11; // Avoid easy division
+                num2 = random.nextInt(90) + 11; // Avoid easy division
             }
+            correctAnswer = num1 / num2;
+        }
 
         int wrongAnswer1 = correctAnswer + random.nextInt(10) + 1;
         int wrongAnswer2 = correctAnswer - (random.nextInt(10) + 1);
