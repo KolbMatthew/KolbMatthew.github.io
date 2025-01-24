@@ -6,6 +6,7 @@ PROJECT_DIR="$HOME/CPS498-Project/"
 LOGS_DIR="$ROOT_PROJECT_DIR/logs"
 DATABASE_URL="jdbc:mysql://main-mindracersdb.cz8i8mg60nru.us-east-2.rds.amazonaws.com:3306/mindracers_database"
 GIT_REPO_URL="https://github.com/Adderflight/CPS498-Project.git"
+PACKAGE_LIST="git npm nano openjdk-17-jdk-headless mysql-server mysql-client libprotobuf-java libmariadb-java caddy"
 
 # log directories
 mkdir -p $LOGS_DIR
@@ -36,7 +37,7 @@ case $choice in
     1)# Install packages
         printf "\nInstalling packages\n\n"
 
-        sudo apt install -y git npm openjdk-17-jdk-headless default-mysql-server libprotobuf-java libmariadb-java nano
+        sudo apt install -y $PACKAGE_LIST
         printf "\nPackages installed\n\n"
         ;;
     2)# Clone git repository
@@ -54,7 +55,7 @@ case $choice in
         printf "\nRunning steps 1-2\n\n"
 
         printf "\nInstalling packages\n\n"
-        apt install -y git npm openjdk-17-jdk-headless default-mysql-server libprotobuf-java libmariadb-java nano
+        apt install -y $PACKAGE_LIST
 
         printf "\nCloning git repository\n\n"
         mkdir -p $ROOT_PROJECT_DIR
