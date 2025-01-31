@@ -67,7 +67,7 @@ case $choice in
         cd $PROJECT_DIR/frontend || return
 
         # build npm frontend
-        npm install &>$LOGS_DIR/frontend-install.log && npm run build &>$LOGS_DIR/frontend-start.log && sudo caddy start & disown $!
+        npm install &>$LOGS_DIR/frontend-install.log && npm run build &>$LOGS_DIR/frontend-start.log && sudo caddy run --config $PROJECT_DIR/frontend/Caddyfile & disown $!
         ;;
     5)# Start backend
         printf "\nStarting backend using mvnw spring-boot:run\n\n"
@@ -88,7 +88,7 @@ case $choice in
         cd $PROJECT_DIR/frontend || return
 
         # build npm frontend and start caddy webserver
-        npm install &>$LOGS_DIR/frontend-install.log && npm run build &>$LOGS_DIR/frontend-start.log && sudo caddy start & disown $!
+        npm install &>$LOGS_DIR/frontend-install.log && npm run build &>$LOGS_DIR/frontend-start.log && sudo caddy run --config $PROJECT_DIR/frontend/Caddyfile & disown $!
 
         # Start backend
         printf "\nStarting backend using mvnw spring-boot:run\n\n"
@@ -108,7 +108,7 @@ case $choice in
         pkill node
 
         # stop caddy webserver
-        caddy stop
+        sudo caddy stop
         ;;
     8)# Stop backend
         printf "\nStopping backend\n\n"
