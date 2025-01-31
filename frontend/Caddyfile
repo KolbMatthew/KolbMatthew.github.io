@@ -10,7 +10,7 @@
 
 http://mindracers.net {
         # Set this path to your site's directory.
-        root * /home/admin/CPS498-Project/frontend/build
+        root * /home/ubuntu/CPS498-Project/frontend/build
         try_files {path} /index.html
 
         # Enable the static file server.
