@@ -2,7 +2,7 @@
 
 # define variables
 ROOT_PROJECT_DIR="$HOME"
-PROJECT_DIR="$HOME/CPS498-Project/"
+PROJECT_DIR="$HOME/CPS498-Project"
 LOGS_DIR="$ROOT_PROJECT_DIR/logs"
 DATABASE_URL="jdbc:mysql://main-mindracersdb.cz8i8mg60nru.us-east-2.rds.amazonaws.com:3306/mindracers_database"
 GIT_REPO_URL="https://github.com/Adderflight/CPS498-Project.git"
