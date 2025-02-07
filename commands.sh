@@ -4,7 +4,7 @@
 ROOT_PROJECT_DIR="$HOME"
 PROJECT_DIR="$HOME/CPS498-Project"
 LOGS_DIR="$ROOT_PROJECT_DIR/logs"
-DATABASE_URL="jdbc:mysql://main-mindracersdb.cz8i8mg60nru.us-east-2.rds.amazonaws.com:3306/mindracers_database?createDatabaseIfNotExist=true"
+DATABASE_URL="jdbc:mysql://mindracers-database.cz8i8mg60nru.us-east-2.rds.amazonaws.com:3306/mindracers_database?createDatabaseIfNotExist=true"
 GIT_REPO_URL="https://github.com/Adderflight/CPS498-Project.git"
 PACKAGE_LIST="git npm nano openjdk-17-jdk-headless mysql-server mysql-client libprotobuf-java libmariadb-java caddy"
 
