@@ -4,7 +4,7 @@
 ROOT_PROJECT_DIR="$HOME"
 PROJECT_DIR="$HOME/CPS498-Project"
 LOGS_DIR="$ROOT_PROJECT_DIR/logs"
-DATABASE_URL="jdbc:mysql://main-mindracersdb.cz8i8mg60nru.us-east-2.rds.amazonaws.com:3306/mindracers_database"
+DATABASE_URL="jdbc:mysql://main-mindracersdb.cz8i8mg60nru.us-east-2.rds.amazonaws.com:3306/mindracers_database?createDatabaseIfNotExist=true"
 GIT_REPO_URL="https://github.com/Adderflight/CPS498-Project.git"
 PACKAGE_LIST="git npm nano openjdk-17-jdk-headless mysql-server mysql-client libprotobuf-java libmariadb-java caddy"
 
@@ -12,6 +12,7 @@ PACKAGE_LIST="git npm nano openjdk-17-jdk-headless mysql-server mysql-client lib
 mkdir -p $LOGS_DIR
 touch $LOGS_DIR/frontend-install.log
 touch $LOGS_DIR/frontend-start.log
+touch $LOGS_DIR/caddy-start.log
 touch $LOGS_DIR/backend-start.log
 touch $LOGS_DIR/backend-stop.log
 
@@ -25,7 +26,7 @@ while true; do
     echo "5) Start backend"
     echo "6) Start frontend and backend"
     echo "7) Stop frontend"
-    echo "8) Stop backend."
+    echo "8) Stop backend"
     echo "9) Stop frontend and backend"
     echo "99) Exit"
 
@@ -43,11 +44,12 @@ case $choice in
     2)# Clone git repository
         printf "\nCloning git repository\n\n"
 
-        mkdir -p $LOGS_DIR
-        touch $LOGS_DIR/frontend-install.log
-        touch $LOGS_DIR/frontend-start.log
-        touch $LOGS_DIR/backend-start.log
-        touch $LOGS_DIR/backend-stop.log
+#         mkdir -p $LOGS_DIR
+#         touch $LOGS_DIR/frontend-install.log
+#         touch $LOGS_DIR/frontend-start.log
+#         touch $LOGS_DIR/caddy-start.log
+#         touch $LOGS_DIR/backend-start.log
+#         touch $LOGS_DIR/backend-stop.log
 
         git clone $GIT_REPO_URL
         ;;
@@ -67,7 +69,7 @@ case $choice in
         cd $PROJECT_DIR/frontend || return
 
         # build npm frontend
-        npm install &>$LOGS_DIR/frontend-install.log && npm run build &>$LOGS_DIR/frontend-start.log && sudo caddy run --config $PROJECT_DIR/frontend/Caddyfile & disown $!
+        npm install &>$LOGS_DIR/frontend-install.log && npm run build &>$LOGS_DIR/frontend-start.log && sudo caddy run --config $PROJECT_DIR/frontend/Caddyfile &>$LOGS_DIR/caddy-start.log & disown $!
         ;;
     5)# Start backend
         printf "\nStarting backend using mvnw spring-boot:run\n\n"
@@ -88,7 +90,7 @@ case $choice in
         cd $PROJECT_DIR/frontend || return
 
         # build npm frontend and start caddy webserver
-        npm install &>$LOGS_DIR/frontend-install.log && npm run build &>$LOGS_DIR/frontend-start.log && sudo caddy run --config $PROJECT_DIR/frontend/Caddyfile & disown $!
+        npm install &>$LOGS_DIR/frontend-install.log && npm run build &>$LOGS_DIR/frontend-start.log && sudo caddy run --config $PROJECT_DIR/frontend/Caddyfile &>$LOGS_DIR/caddy-start.log & disown $!
 
         # Start backend
         printf "\nStarting backend using mvnw spring-boot:run\n\n"
@@ -122,7 +124,7 @@ case $choice in
         pkill node
 
         # stop caddy webserver
-        stop caddy
+        sudo caddy stop
 
         ## stop backend
         cd $PROJECT_DIR/backend || return
