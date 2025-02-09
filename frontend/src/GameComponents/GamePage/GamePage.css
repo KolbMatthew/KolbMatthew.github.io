@@ -15,3 +15,8 @@
 #result-output {
     text-align: center;
 }
+
+.highlighted {
+    background-color: #ffcc00; /* Highlight color */
+    color: black; /* Text color */
+  }
