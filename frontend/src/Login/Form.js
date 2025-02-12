@@ -1,7 +1,15 @@
 import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import "./Form.css";
 
 function Form() {
+  const navigate = useNavigate();
+  
   //signup form submit
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -133,6 +141,9 @@ function Form() {
         email: "",
         password: "",
       });
+
+      // Redirect to game page
+      navigate('/game');
       
     } else {
       //ok: false when invalid credentials
