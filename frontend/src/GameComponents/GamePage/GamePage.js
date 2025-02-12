@@ -12,6 +12,7 @@ function GamePage() {
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
 
+  // Fetch questions from backend
   useEffect(() => {
     fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
       method: "GET",
@@ -21,13 +22,14 @@ function GamePage() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setQuestions(data); // Adjust this if data is not an array
+        setQuestions(data); 
       })
       .catch((err) => {
         console.log(err.message);
       });
   }, [difficulty]);
 
+  // Function to move to next question
   const nextQuestion = () => {
     if (activeQuestionIndex < questions.length - 1) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
@@ -46,6 +48,7 @@ function GamePage() {
     console.log(questions);
   }, [questions]);
 
+  // Handle option click
   const handleOptionClick = (value) => {
     if (value === activeQuestion.correctAnswer) {
       setOutput("Correct!");
@@ -56,6 +59,7 @@ function GamePage() {
     nextQuestion();
   };
 
+  // Handle continue button and difficulty selection
   const handleContinue = () => {
     setActiveQuestionIndex(0);
     setScore(0);
@@ -68,17 +72,19 @@ function GamePage() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setQuestions(data); // Adjust this if data is not an array
+        setQuestions(data);
       })
       .catch((err) => {
         console.log(err.message);
       });
   };
 
+  // Handle Difficulty selection
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
   };
 
+  // Once user has answered all questions, display score and continue button
   if (gameOver) {
     return (
       <div>
