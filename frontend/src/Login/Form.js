@@ -6,12 +6,7 @@ function Form() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const form = document.getElementById("sign-up");
-    const email = document.getElementById("email").value;
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    const confirmEmail = document.getElementById("confirmEmail").value;
-    const password2 = document.getElementById("password2").value;
+    const { email, username, password, confirmEmail, password2 } = inputValues;
 
     // Simple validation
     if (email !== confirmEmail) {
@@ -39,22 +34,23 @@ function Form() {
       body: urlData,
     });
 
+    let output = document.getElementById("user-exists");
+   
+    if (!output) {
+      output = document.createElement("h2");
+      output.setAttribute("id", "user-exists");
+      document.getElementById("sign-up").appendChild(output);
+    }
+
     if (response.ok) {
       const jsonResponse = await response.json();
+      output.innerText = jsonResponse.success === 0
+      ? "User already registered with this email."
+      : "Registration Successful";
 
-      const output = document.createElement("h2");
-      output.setAttribute("id", "user-exists");
-
-      if (!document.getElementById("user-exists")) {
-        form.appendChild(output);
-      }
-
-      if (jsonResponse.success === 0) {
-        output.innerText = "User already registered with this email.";
-      } else if (jsonResponse.success === 1) {
-        output.innerText = "Registration Successful";
+      if (jsonResponse.success === 1) {
         setInputValues({
-          userName: "",
+          username: "",
           email: "",
           confirmEmail: "",
           password: "",
@@ -62,7 +58,9 @@ function Form() {
         });
       }
     } else {
-      throw new Error("POST request failed");
+      const errorText = await response.text();
+      console.error("POST request failed:", response.status, errorText);
+      alert(`Error: ${response.status} - ${errorText}`);
     }
   };
 
@@ -71,7 +69,7 @@ function Form() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showLoginStatus, setLoginStatus] = useState("");
   const [inputValues, setInputValues] = useState({
-    userName: "",
+    username: "",
     email: "",
     confirmEmail: "",
     password: "",
@@ -135,6 +133,7 @@ function Form() {
         email: "",
         password: "",
       });
+      
     } else {
       //ok: false when invalid credentials
       console.log(response);
@@ -165,14 +164,14 @@ function Form() {
           <h1>Sign Up for Free.</h1>
           <form id="sign-up" onSubmit={handleSubmit}>
             <div className="field-wrap">
-              <label className={inputValues.userName ? "active highlight" : ""}>
+              <label className={inputValues.username ? "active highlight" : ""}>
                 Username<span className="req">*</span>
               </label>
               <input
                 type="text"
-                name="userName"
+                name="username"
                 id="username"
-                value={inputValues.userName}
+                value={inputValues.username}
                 required
                 autoComplete="off"
                 onChange={handleInputChange}
