@@ -3,8 +3,8 @@ function GameCanvas() {
     <canvas
       data-testid="GameCanvas"
       id="GameCanvas"
-      width="800"
-      height="600"
+      width="600"
+      height="450"
       style={{ backgroundColor: "black" }}
     ></canvas>
   );
