@@ -2,11 +2,12 @@ body {
   display: flex;
   justify-content: center;
   background-color: lightgrey;
-  margin: 0;
+  margin: 10;
 }
 
 input {
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .title {
