@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import "./GamePage.css";
 
 function GamePage() {
-  const [showOutput, setOutput] = useState("Select an answer to get started!");
+  const [showOutput, setOutput] = useState("");
   const [questions, setQuestions] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -125,13 +125,13 @@ function GamePage() {
 
   return (
     <>
-      <div>
-        <GameCanvas />
-      </div>
-
       <h2 id="result-output" data-testid="result-output">
         {showOutput}
       </h2>
+
+      <div>
+        <GameCanvas />
+      </div>
 
       <div>
         <h2 id="prompt-output" data-testid="prompt-output">
