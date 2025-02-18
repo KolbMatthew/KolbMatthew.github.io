@@ -11,10 +11,11 @@ function GamePage() {
   const [questionsInSet, setQuestionsInSet] = useState(5);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
+  const [showWinMessage, setShowWinMessage] = useState(false);
 
   // Fetch questions from backend
   useEffect(() => {
-    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
+    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -27,14 +28,17 @@ function GamePage() {
       .catch((err) => {
         console.log(err.message);
       });
-  }, [difficulty]);
+  }, [difficulty, questionsInSet]);
 
   // Function to move to next question
   const nextQuestion = () => {
     if (activeQuestionIndex < questions.length - 1) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
     } else {
-      setGameOver(true);
+      setShowWinMessage(true);
+      setTimeout(() => {
+        setGameOver(true);
+      }, 3000); // 3-second delay before setting game over
     }
   };
 
@@ -53,9 +57,16 @@ function GamePage() {
     if (value === activeQuestion.correctAnswer) {
       setOutput("Correct!");
       setScore(score + 10);
+      nextQuestion();
     } else {
       setOutput("Incorrect!");
     }
+  };
+
+  // Handle instant correct answer
+  const handleInstantCorrect = () => {
+    setOutput("Correct!");
+    setScore(score + 10);
     nextQuestion();
   };
 
@@ -64,7 +75,9 @@ function GamePage() {
     setActiveQuestionIndex(0);
     setScore(0);
     setGameOver(false);
-    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
+    setShowWinMessage(false);
+    setOutput("Select an answer to get started!");
+    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -126,7 +139,11 @@ function GamePage() {
   return (
     <>
       <div>
-        <GameCanvas />
+        <GameCanvas
+          activeQuestionIndex={activeQuestionIndex}
+          questionsInSet={questionsInSet}
+          showWinMessage={showWinMessage}
+        />
       </div>
 
       <h2 id="result-output" data-testid="result-output">
@@ -151,8 +168,9 @@ function GamePage() {
       <div>
         <h2>Score: {score}</h2>
       </div>
-    </>
 
+      <button onClick={handleInstantCorrect}>Get Correct Answer</button>
+    </>
   );
 }
 
