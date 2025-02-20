@@ -1,12 +1,16 @@
 import { useEffect, useRef } from "react";
+import carImageSrc from "../../site-images/temp-racecar.png";
 
 function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
   const canvasRef = useRef(null);
   const blockPosition = useRef(0);
+  const carImage = useRef(new Image());
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+
+    carImage.current.src = carImageSrc;
 
     const drawTrack = () => {
       ctx.fillStyle = "gray";
@@ -17,8 +21,12 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
 
     const drawBlock = () => {
       if (activeQuestionIndex < questionsInSet) {
-        ctx.fillStyle = "red";
-        ctx.fillRect(blockPosition.current, canvas.height / 2 - 25, 50, 50);
+        const carWidth = carImage.current.naturalWidth;
+        const carHeight = carImage.current.naturalHeight;
+        const aspectRatio = carWidth / carHeight;
+        const height = 100;
+        const width = height * aspectRatio;
+        ctx.drawImage(carImage.current, blockPosition.current, canvas.height / 2 - 25, width, height);
       }
     };
 
@@ -45,7 +53,9 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
       requestAnimationFrame(animate);
     };
 
-    animate();
+    carImage.current.onload = () => {
+      animate();
+    };
   }, [activeQuestionIndex, questionsInSet, showWinMessage]);
 
   return (
