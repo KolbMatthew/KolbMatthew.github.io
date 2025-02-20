@@ -47,8 +47,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
     };
 
     const animate = () => {
-      blockPosition.current =
-        (activeQuestionIndex / questionsInSet) * (canvas.width + 50);
+      blockPosition.current = (activeQuestionIndex / questionsInSet) * (canvas.width + 50);
       updateCanvas();
       requestAnimationFrame(animate);
     };
