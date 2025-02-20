@@ -8,13 +8,14 @@ function GamePage() {
   const [questions, setQuestions] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [questionsInSet, setQuestionsInSet] = useState(5);
+  const [questionsInSet] = useState(5);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
   const [showWinMessage, setShowWinMessage] = useState(false);
 
   // Fetch questions from backend
   useEffect(() => {
+    console.log(`Fetching ${questionsInSet} questions with difficulty ${difficulty}`);
     fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
       method: "GET",
       headers: {
@@ -23,6 +24,7 @@ function GamePage() {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log("Fetched questions:", data);
         setQuestions(data); 
       })
       .catch((err) => {
@@ -32,7 +34,7 @@ function GamePage() {
 
   // Function to move to next question
   const nextQuestion = () => {
-    if (activeQuestionIndex < questions.length - 1) {
+    if (activeQuestionIndex < questionsInSet - 1) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
     } else {
       setShowWinMessage(true);
