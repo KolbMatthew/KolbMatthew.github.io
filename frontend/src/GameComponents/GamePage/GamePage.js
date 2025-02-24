@@ -12,6 +12,7 @@ function GamePage() {
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
   const [showDifficultySelection, setShowDifficultySelection] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(60000); 
 
   // Fetch questions from backend
   useEffect(() => {
@@ -31,6 +32,20 @@ function GamePage() {
         });
     }
   }, [difficulty, showDifficultySelection]);
+
+  // Timer effect
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setGameOver(true);
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 10);
+    }, 10);
+
+    return () => clearInterval(timerId);
+  }, [timeLeft]);
 
   // Function to move to next question
   const nextQuestion = () => {
@@ -67,6 +82,7 @@ function GamePage() {
     setActiveQuestionIndex(0);
     setScore(0);
     setGameOver(false);
+    setTimeLeft(60000); 
     fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
       method: "GET",
       headers: {
@@ -86,6 +102,12 @@ function GamePage() {
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
     setShowDifficultySelection(false);
+  };
+
+  const formatTime = (time) => {
+    const seconds = Math.floor(time / 1000);
+    const milliseconds = Math.floor((time % 1000) / 10); 
+    return `${seconds}.${milliseconds.toString().padStart(2, '0')}`;
   };
 
   if (showDifficultySelection) {
@@ -168,6 +190,10 @@ function GamePage() {
 
       <div>
         <h2>Score: {score}</h2>
+      </div>
+
+      <div>
+        <h2>Time Left: {formatTime(timeLeft)} seconds</h2>
       </div>
     </>
   );
