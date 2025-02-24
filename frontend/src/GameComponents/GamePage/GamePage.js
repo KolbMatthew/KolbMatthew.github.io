@@ -11,23 +11,26 @@ function GamePage() {
   const [questionsInSet, setQuestionsInSet] = useState(5);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
+  const [showDifficultySelection, setShowDifficultySelection] = useState(true);
 
   // Fetch questions from backend
   useEffect(() => {
-    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setQuestions(data); 
+    if (!showDifficultySelection) {
+      fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }, [difficulty]);
+        .then((response) => response.json())
+        .then((data) => {
+          setQuestions(data);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    }
+  }, [difficulty, showDifficultySelection]);
 
   // Function to move to next question
   const nextQuestion = () => {
@@ -82,7 +85,22 @@ function GamePage() {
   // Handle Difficulty selection
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
+    setShowDifficultySelection(false);
   };
+
+  if (showDifficultySelection) {
+    return (
+      <div>
+        <h3>Select Difficulty:</h3>
+        <div>
+          <button onClick={() => handleDifficultyChange(1)}>Easy</button>
+          <button onClick={() => handleDifficultyChange(2)}>Medium</button>
+          <button onClick={() => handleDifficultyChange(3)}>Hard</button>
+          <button onClick={() => handleDifficultyChange(4)}>Extreme</button>
+        </div>
+      </div>
+    );
+  }
 
   // Once user has answered all questions, display score and continue button
   if (gameOver) {
@@ -152,7 +170,6 @@ function GamePage() {
         <h2>Score: {score}</h2>
       </div>
     </>
-
   );
 }
 

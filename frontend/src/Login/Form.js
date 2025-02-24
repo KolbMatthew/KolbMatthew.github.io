@@ -115,9 +115,6 @@ function Form() {
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
-    //testing purposes
-    console.log(email, password);
-
     const urlData = new URLSearchParams();
     urlData.append("email", email);
     urlData.append("password", password);
@@ -131,11 +128,7 @@ function Form() {
     });
 
     if (response.ok) {
-      console.log(response);
       const jsonResponse = await response.json();
-
-      console.log(jsonResponse);
-
       setLoginStatus("Logged in!");
       setLoginValues({
         email: "",
@@ -144,10 +137,7 @@ function Form() {
 
       // Redirect to game page
       navigate('/game');
-      
     } else {
-      //ok: false when invalid credentials
-      console.log(response);
       setLoginStatus("Invalid email or password.");
     }
   };
