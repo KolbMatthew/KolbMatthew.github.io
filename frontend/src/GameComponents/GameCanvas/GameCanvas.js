@@ -1,13 +1,20 @@
 import { useEffect, useRef } from "react";
 import carImageSrc from "../../site-images/temp-racecar.png";
+import roadImageSrc from "../../site-images/Road.png";
+
 
 function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
   const canvasRef = useRef(null);
+
   const racecarPosition = useRef(0);
   const targetPosition = useRef(0);
   const carImage = useRef(new Image());
   const travelDistance = 0.75; // Adjust this value to control the distance the car travels each time
   const carSpeed = 0.02 // Adjust this value to control the "speed" of the car (lerp speed)
+
+  const roadPosition = useRef(0);
+  const roadImage = useRef(new Image());
+  const roadSpeed = 0.5;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -16,12 +23,22 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
     // Load the car image
     carImage.current.src = carImageSrc;
 
+    // Load the road image
+    roadImage.current.src = roadImageSrc;
+
     // Function to draw the track
     const drawTrack = () => {
       ctx.fillStyle = "gray";
       ctx.fillRect(0, canvas.height / 2 - 50, canvas.width, 100);
-      ctx.fillStyle = "white";
-      ctx.fillRect(0, canvas.height / 2 - 5, canvas.width, 10);
+      // ctx.fillStyle = "white";
+      // ctx.fillRect(0, canvas.height / 2 - 5, canvas.width, 10);
+      const roadWidth = roadImage.current.naturalWidth;
+      const roadHeight = roadImage.current.naturalHeight;
+      const aspectRatio = roadWidth / roadHeight;
+      const height = 150;
+      const width = height * aspectRatio;
+      ctx.drawImage(roadImage.current, roadPosition.current, canvas.height / 2 - 5, width, height)
+
     };
 
     // Function to draw the racecar
@@ -56,13 +73,18 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
       return start * (1 - t) + end * t;
     };
 
-    // Animation function to update the racecar position
+    // Animation function to update the racecar and road position
     const animate = () => {
       const carWidth = carImage.current.naturalWidth;
       // Calculate the target position based on the active question index
       targetPosition.current = (activeQuestionIndex / questionsInSet) * (canvas.width + carWidth * 2) * travelDistance; // Adjust travel distance
       // Smoothly interpolate the racecar position
       racecarPosition.current = lerp(racecarPosition.current, targetPosition.current, carSpeed);
+
+      roadPosition.current = roadPosition.current - roadSpeed
+      if(roadPosition.current == -600){
+        roadPosition.current = 0;
+      }
       updateCanvas();
       requestAnimationFrame(animate);
     };
