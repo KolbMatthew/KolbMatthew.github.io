@@ -52,6 +52,9 @@ function GamePage() {
     if (activeQuestionIndex < questions.length - 1) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
     } else {
+      // Calculate additional points based on remaining time
+      const additionalPoints = Math.floor(timeLeft / 1000); // 1 point per second left
+      setScore((prevScore) => prevScore + additionalPoints);
       setGameOver(true);
     }
   };
@@ -71,10 +74,11 @@ function GamePage() {
     if (value === activeQuestion.correctAnswer) {
       setOutput("Correct!");
       setScore(score + 10);
+      nextQuestion();
     } else {
-      setOutput("Incorrect!");
+      setOutput("Incorrect! Try Again!");
+      setScore(score - 10);
     }
-    nextQuestion();
   };
 
   // Handle continue button and difficulty selection
@@ -108,6 +112,16 @@ function GamePage() {
     const seconds = Math.floor(time / 1000);
     const milliseconds = Math.floor((time % 1000) / 10); 
     return `${seconds}.${milliseconds.toString().padStart(2, '0')}`;
+  };
+
+  // Debug functions
+  const handleDebugCorrect = () => {
+    handleOptionClick(activeQuestion.correctAnswer);
+  };
+
+  const handleDebugIncorrect = () => {
+    const incorrectOption = options.find(option => option !== activeQuestion.correctAnswer);
+    handleOptionClick(incorrectOption);
   };
 
   if (showDifficultySelection) {
@@ -195,9 +209,14 @@ function GamePage() {
       <div>
         <h2>Time Left: {formatTime(timeLeft)} seconds</h2>
       </div>
+
+      {/* Debug buttons */}
+      <div>
+        <button onClick={handleDebugCorrect}>Get Correct Answer</button>
+        <button onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
+      </div>
     </>
   );
 }
 
 export default GamePage;
-//test
