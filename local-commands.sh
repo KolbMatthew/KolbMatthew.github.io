@@ -6,13 +6,13 @@ PROJECT_DIR="$HOME/CPS498-Project"
 LOGS_DIR="$ROOT_PROJECT_DIR/logs"
 DATABASE_URL="jdbc:mysql://localhost:3306/mindracers_database?createDatabaseIfNotExist=true"
 GIT_REPO_URL="https://github.com/Adderflight/CPS498-Project.git"
-PACKAGE_LIST="git npm nano openjdk-17-jdk-headless mysql-server mysql-client libprotobuf-java libmariadb-java caddy"
+PACKAGE_LIST="git npm nano openjdk-17-jdk-headless mysql-server mysql-client libprotobuf-java libmariadb-java"
 
 # log directories
 mkdir -p $LOGS_DIR
 touch $LOGS_DIR/frontend-install.log
 touch $LOGS_DIR/frontend-start.log
-touch $LOGS_DIR/caddy-start.log
+#touch $LOGS_DIR/caddy-start.log
 touch $LOGS_DIR/backend-start.log
 touch $LOGS_DIR/backend-stop.log
 
@@ -42,7 +42,7 @@ case $choice in
         printf "\nPackages installed\n\n"
         ;;
     2)# Update/pull git repository
-        printf "\nCloning git repository\n\n"
+        printf "\nUpdating git repository\n\n"
 
 #         mkdir -p $LOGS_DIR
 #         touch $LOGS_DIR/frontend-install.log
@@ -59,12 +59,12 @@ case $choice in
         printf "\nInstalling packages\n\n"
         apt install -y $PACKAGE_LIST
 
-        printf "\nCloning git repository\n\n"
+        printf "\nUpdating git repository\n\n"
         mkdir -p $ROOT_PROJECT_DIR
-        git clone $GIT_REPO_URL
+        git pull $GIT_REPO_URL
         ;;
     4)# Start frontend
-        printf "\nStarting frontend using npm and caddy\n\n"
+        printf "\nStarting frontend using npm\n\n"
 
         cd $PROJECT_DIR/frontend || return
 
@@ -76,20 +76,24 @@ case $choice in
         cd $PROJECT_DIR/backend || return
 
         # prompt for username for database user
-        read -rp "Enter the database username: " DB_USER
+        #read -rp "Enter the database username: " DB_USER
 
         # prompt for databse password
-        read -rp "Enter the database password: " DB_PASSWORD
+        #read -rp "Enter the database password: " DB_PASSWORD
+
+        # database username and password for development purposes only
+        DB_USER="db_user"
+        DB_PASSWORD="somepassword"
 
         chmod +x mvnw && env DATABASE_URL=$DATABASE_URL DATABASE_USER=$DB_USER DATABASE_PASSWORD=$DB_PASSWORD ./mvnw spring-boot:run &>$LOGS_DIR/backend-start.log & disown $!
         ;;
     6)# Start frontend and backend
         # Start frontend
-        printf "\nStarting frontend using npm and caddy\n\n"
+        printf "\nStarting frontend using npm\n\n"
 
         cd $PROJECT_DIR/frontend || return
 
-        # build npm frontend and start caddy webserver
+        # build npm frontend
         npm install &>$LOGS_DIR/frontend-install.log && npm start &>$LOGS_DIR/frontend-start.log
 
         # Start backend
