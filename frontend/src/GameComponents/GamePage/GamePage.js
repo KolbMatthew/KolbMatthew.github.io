@@ -8,7 +8,7 @@ function GamePage() {
   const [questions, setQuestions] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [questionsInSet, setQuestionsInSet] = useState(5);
+  const [questionsInSet] = useState(5);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
   const [showDifficultySelection, setShowDifficultySelection] = useState(true);
@@ -16,40 +16,26 @@ function GamePage() {
 
   // Fetch questions from backend
   useEffect(() => {
-    if (!showDifficultySelection) {
-      fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
+    console.log(`Fetching ${questionsInSet} questions with difficulty ${difficulty}`);
+    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched questions:", data);
+        setQuestions(data); 
       })
-        .then((response) => response.json())
-        .then((data) => {
-          setQuestions(data);
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    }
-  }, [difficulty, showDifficultySelection]);
-
-  // Timer effect
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      setGameOver(true);
-      return;
-    }
-
-    const timerId = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 10);
-    }, 10);
-
-    return () => clearInterval(timerId);
-  }, [timeLeft]);
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [difficulty, questionsInSet]);
 
   // Function to move to next question
   const nextQuestion = () => {
-    if (activeQuestionIndex < questions.length - 1) {
+    if (activeQuestionIndex < questionsInSet - 1) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
     } else {
       // Calculate additional points based on remaining time
@@ -75,10 +61,18 @@ function GamePage() {
       setOutput("Correct!");
       setScore(score + 10);
       nextQuestion();
+      nextQuestion();
     } else {
       setOutput("Incorrect! Try Again!");
       setScore(score - 10);
     }
+  };
+
+  // Handle instant correct answer
+  const handleInstantCorrect = () => {
+    setOutput("Correct!");
+    setScore(score + 10);
+    nextQuestion();
   };
 
   // Handle continue button and difficulty selection
@@ -86,8 +80,10 @@ function GamePage() {
     setActiveQuestionIndex(0);
     setScore(0);
     setGameOver(false);
+    setShowWinMessage(false);
+    setOutput("Select an answer to get started!");
     setTimeLeft(60000); 
-    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
+    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -180,7 +176,11 @@ function GamePage() {
   return (
     <>
       <div>
-        <GameCanvas />
+        <GameCanvas
+          activeQuestionIndex={activeQuestionIndex}
+          questionsInSet={questionsInSet}
+          showWinMessage={showWinMessage}
+        />
       </div>
 
       <h2 id="result-output" data-testid="result-output">
