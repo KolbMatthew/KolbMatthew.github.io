@@ -12,6 +12,7 @@ function GamePage() {
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
   const [showWinMessage, setShowWinMessage] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(null);
 
   // Fetch questions from backend
   useEffect(() => {
@@ -59,9 +60,11 @@ function GamePage() {
     if (value === activeQuestion.correctAnswer) {
       setOutput("Correct!");
       setScore(score + 10);
+      setIsCorrect(true);
       nextQuestion();
     } else {
       setOutput("Incorrect!");
+      setIsCorrect(false);
     }
   };
 
@@ -69,6 +72,7 @@ function GamePage() {
   const handleInstantCorrect = () => {
     setOutput("Correct!");
     setScore(score + 10);
+    setIsCorrect(true);
     nextQuestion();
   };
 
@@ -144,6 +148,7 @@ function GamePage() {
         activeQuestionIndex={activeQuestionIndex}
         questionsInSet={questionsInSet}
         showWinMessage={showWinMessage}
+        isCorrect={isCorrect}
       />
 
       <div className="question-container">
