@@ -39,14 +39,14 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
   const baseSpeeds = {
     sunSpeed: 0.0,
-    sunsetSpeed: 0.2,
-    cloudSpeed: 0.2,
-    cloudSpeed2: 0.4,
-    cloudSpeed3: 0.8,
-    groundSpeed: 0.5,
-    roadSpeed: 0.6,
-    mountainSpeed1: 0.1,
-    mountainSpeed2: 0.15,
+    sunsetSpeed: 20,
+    cloudSpeed: 20,
+    cloudSpeed2: 40,
+    cloudSpeed3: 80,
+    groundSpeed: 50,
+    roadSpeed: 60,
+    mountainSpeed1: 10,
+    mountainSpeed2: 15,
   };
 
   useEffect(() => {
@@ -65,13 +65,15 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     mountainImage1.current.src = mountainImageSrc;
     mountainImage2.current.src = mountainImageSrc;
 
+    let lastTime = performance.now();
+
     // Function to draw the layers
-    const drawLayer = (image, position, speed, y, height, loops, offset = 0) => {
+    const drawLayer = (image, position, speed, y, height, loops, deltaTime, offset = 0) => {
       const width = image.naturalWidth * (height / image.naturalHeight);
       for (let i = 0; i < loops; i++) {
         ctx.drawImage(image, position + i * (width - 1) + offset, y, width, height);
       }
-      position -= speed * speedMultiplier;
+      position -= speed * speedMultiplier * deltaTime;
       if (position <= -width) {
         position += width;
       }
@@ -96,17 +98,17 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     };
 
     // Function to update the canvas
-    const updateCanvas = () => {
+    const updateCanvas = (deltaTime) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      sunsetPosition.current = drawLayer(sunsetImage.current, sunsetPosition.current, baseSpeeds.sunsetSpeed, 0, 300, 2);
-      sunPosition.current = drawLayer(sunImage.current, sunPosition.current, baseSpeeds.sunSpeed, 0, 200, 2);
-      cloudPosition.current = drawLayer(cloudImage.current, cloudPosition.current, baseSpeeds.cloudSpeed, 15, 50, 8);
-      mountainPosition1.current = drawLayer(mountainImage1.current, mountainPosition1.current, baseSpeeds.mountainSpeed1, 30, 600, 3);
-      mountainPosition2.current = drawLayer(mountainImage2.current, mountainPosition2.current, baseSpeeds.mountainSpeed2, 30, 300, 3, -100); 
-      cloudPosition2.current = drawLayer(cloudImage2.current, cloudPosition2.current, baseSpeeds.cloudSpeed2, 50, 100, 4);
-      cloudPosition3.current = drawLayer(cloudImage3.current, cloudPosition3.current, baseSpeeds.cloudSpeed3, 75, 200, 3);
-      groundPosition.current = drawLayer(groundImage.current, groundPosition.current, baseSpeeds.groundSpeed, -40, 400, 2);
-      roadPosition.current = drawLayer(roadImage.current, roadPosition.current, baseSpeeds.roadSpeed, -65, 400, 2);
+      sunsetPosition.current = drawLayer(sunsetImage.current, sunsetPosition.current, baseSpeeds.sunsetSpeed, 0, 300, 2, deltaTime);
+      sunPosition.current = drawLayer(sunImage.current, sunPosition.current, baseSpeeds.sunSpeed, 0, 200, 2, deltaTime);
+      cloudPosition.current = drawLayer(cloudImage.current, cloudPosition.current, baseSpeeds.cloudSpeed, 15, 50, 8, deltaTime);
+      mountainPosition1.current = drawLayer(mountainImage1.current, mountainPosition1.current, baseSpeeds.mountainSpeed1, 30, 600, 3, deltaTime);
+      mountainPosition2.current = drawLayer(mountainImage2.current, mountainPosition2.current, baseSpeeds.mountainSpeed2, 30, 300, 3, deltaTime, -100); 
+      cloudPosition2.current = drawLayer(cloudImage2.current, cloudPosition2.current, baseSpeeds.cloudSpeed2, 50, 100, 4, deltaTime);
+      cloudPosition3.current = drawLayer(cloudImage3.current, cloudPosition3.current, baseSpeeds.cloudSpeed3, 75, 200, 3, deltaTime);
+      groundPosition.current = drawLayer(groundImage.current, groundPosition.current, baseSpeeds.groundSpeed, -40, 400, 2, deltaTime);
+      roadPosition.current = drawLayer(roadImage.current, roadPosition.current, baseSpeeds.roadSpeed, -65, 400, 2, deltaTime);
       drawRacecar();
       if (showWinMessage) {
         drawWinMessage();
@@ -119,7 +121,10 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     };
 
     // Animation function to update the racecar and road position
-    const animate = () => {
+    const animate = (time) => {
+      const deltaTime = (time - lastTime) / 1000; // Convert to seconds
+      lastTime = time;
+
       const carWidth = carImage.current.naturalWidth;
       // Calculate the target position based on the active question index
       targetPosition.current = (activeQuestionIndex / questionsInSet) * (canvas.width + carWidth * 2) * travelDistance; // Adjust travel distance
@@ -127,13 +132,13 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
       // Smoothly interpolate the racecar position
       racecarPosition.current = lerp(racecarPosition.current, targetPosition.current, carSpeed.current);
 
-      updateCanvas();
+      updateCanvas(deltaTime);
       requestAnimationFrame(animate);
     };
 
     // Start the animation once the car image is loaded
     carImage.current.onload = () => {
-      animate();
+      requestAnimationFrame(animate);
     };
 
   }, [activeQuestionIndex, questionsInSet, showWinMessage, speedMultiplier]);
