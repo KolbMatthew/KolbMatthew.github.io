@@ -43,6 +43,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
   const treePositions = useRef([]); 
 
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
+  const scaleFactor = 2.0; 
   const baseSpeeds = {
     sunSpeed: 0.0,
     sunsetSpeed: 20,
@@ -103,8 +104,10 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     // Function to draw the win message
     const drawWinMessage = () => {
       ctx.fillStyle = "black";
-      ctx.font = "48px Arial";
-      ctx.fillText("You Win!", canvas.width / 2 - 100, canvas.height / 2);
+      ctx.font = `${48 * scaleFactor}px Arial`;
+      ctx.textAlign = "center"; // Center the text horizontally
+      ctx.textBaseline = "middle"; // Center the text vertically
+      ctx.fillText("You Win!", canvas.width / 2 / scaleFactor, canvas.height / 2 / scaleFactor);
     };
 
     // Function to spawn and draw trees
@@ -172,6 +175,8 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     // Function to update the canvas
     const updateCanvas = (deltaTime) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save(); // Save the current state
+      ctx.scale(scaleFactor, scaleFactor); // Scale the canvas context
       sunsetPosition.current = drawLayer(sunsetImage.current, sunsetPosition.current, baseSpeeds.sunsetSpeed, 0, 300, 2, deltaTime);
       sunPosition.current = drawLayer(sunImage.current, sunPosition.current, baseSpeeds.sunSpeed, 0, 200, 2, deltaTime);
       cloudPosition.current = drawLayer(cloudImage.current, cloudPosition.current, baseSpeeds.cloudSpeed, 15, 50, 8, deltaTime);
@@ -186,6 +191,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
       if (showWinMessage) {
         drawWinMessage();
       }
+      ctx.restore(); // Restore the state
     };
 
     // Linear interpolation function for smooth movement
@@ -200,7 +206,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
 
       const carWidth = carImage.current.naturalWidth;
       // Calculate the target position based on the active question index
-      targetPosition.current = (activeQuestionIndex / questionsInSet) * (canvas.width + carWidth * 2) * travelDistance; // Adjust travel distance
+      targetPosition.current = (activeQuestionIndex / questionsInSet) * (canvas.width / scaleFactor + carWidth * 2) * travelDistance; // Adjust travel distance
 
       // Smoothly interpolate the racecar position
       racecarPosition.current = lerp(racecarPosition.current, targetPosition.current, carSpeed.current);
@@ -214,7 +220,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
       requestAnimationFrame(animate);
     };
 
-  }, [activeQuestionIndex, questionsInSet, showWinMessage, speedMultiplier]);
+  }, [activeQuestionIndex, questionsInSet, showWinMessage, speedMultiplier, scaleFactor]);
 
   useEffect(() => {
     if (isCorrect) {
@@ -225,14 +231,16 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
   }, [activeQuestionIndex, isCorrect]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      data-testid="GameCanvas"
-      id="GameCanvas"
-      width="600"
-      height="350"
-      style={{ backgroundColor: "black" }}
-    ></canvas>
+    <div>
+      <canvas
+        ref={canvasRef}
+        data-testid="GameCanvas"
+        id="GameCanvas"
+        width={600 * scaleFactor} // Adjust canvas width based on scaleFactor
+        height={350 * scaleFactor} // Adjust canvas height based on scaleFactor
+        style={{ backgroundColor: "black" }}
+      ></canvas>
+    </div>
   );
 }
 
