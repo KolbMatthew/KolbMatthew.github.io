@@ -149,27 +149,15 @@ function GamePage() {
         questionsInSet={questionsInSet}
         showWinMessage={showWinMessage}
         isCorrect={isCorrect}
+        prompt={prompt}
+        options={options}
+        handleOptionClick={handleOptionClick}
       />
 
       <div className="question-container">
         <h2 id="result-output" data-testid="result-output">
           {showOutput}
         </h2>
-
-        <div>
-          <h2 id="prompt-output" data-testid="prompt-output">
-            {prompt}
-          </h2>
-          <div id="option-container">
-            {options.map((option, index) => (
-              <Option
-                key={index}
-                text={option}
-                onClick={() => handleOptionClick(option)}
-              />
-            ))}
-          </div>
-        </div>
 
         <div>
           <h2>Score: {score}</h2>

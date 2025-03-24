@@ -7,9 +7,10 @@ import cloudImageASrc from "../../site-images/Game/clouds-A.png";
 import cloudImageBSrc from "../../site-images/Game/clouds-B.png";
 import groundImageSrc from "../../site-images/Game/ground.png";
 import mountainImageSrc from "../../site-images/Game/mountains.png";
-import treeImageSrc from "../../site-images/Game/tree.png"; 
+import treeImageSrc from "../../site-images/Game/tree.png";
+import "./GameCanvas.css"; // Import CSS file
 
-function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCorrect }) {
+function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCorrect, prompt, options, handleOptionClick }) {
   const canvasRef = useRef(null);
 
   const racecarPosition = useRef(0);
@@ -40,10 +41,10 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
   const mountainPosition1 = useRef(0);
   const mountainPosition2 = useRef(0);
   const mountainPosition3 = useRef(0);
-  const treePositions = useRef([]); 
+  const treePositions = useRef([]);
 
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
-  const scaleFactor = 2.0; 
+  const scaleFactor = 1.5;
   const baseSpeeds = {
     sunSpeed: 0.0,
     sunsetSpeed: 20,
@@ -55,7 +56,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     mountainSpeed1: 5,
     mountainSpeed2: 10,
     mountainSpeed3: 15,
-    treeSpeed: 60, 
+    treeSpeed: 60,
   };
 
   useEffect(() => {
@@ -74,7 +75,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     mountainImage1.current.src = mountainImageSrc;
     mountainImage2.current.src = mountainImageSrc;
     mountainImage3.current.src = mountainImageSrc;
-    treeImage.current.src = treeImageSrc; 
+    treeImage.current.src = treeImageSrc;
 
     let lastTime = performance.now();
 
@@ -117,7 +118,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
       const bottomTreeYRange = [350, 400]; // Adjust this value to control the y-range for trees on the bottom side of the road
       const treeSizeRange = [0.09, 0.2]; // Adjust this value to control the size range for trees
       const treeCount = Math.floor(canvas.width / treeSpacing);
-    
+
       if (treePositions.current.length === 0) {
         const newTreePositions = [];
         for (let i = 0; i < treeCount; i++) {
@@ -130,10 +131,10 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
         }
         treePositions.current = newTreePositions;
       }
-    
+
       const treesBehindCar = [];
       const treesInFrontOfCar = [];
-    
+
       treePositions.current.forEach((tree, index) => {
         const treeWidth = treeImage.current.naturalWidth * tree.size;
         const treeHeight = treeImage.current.naturalHeight * tree.size;
@@ -143,7 +144,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
           treesInFrontOfCar.push(tree);
         }
         tree.x -= baseSpeeds.treeSpeed * speedMultiplier * deltaTime;
-    
+
         // Respawn tree if it goes off screen
         if (tree.x + treeWidth < 0) {
           tree.x = canvas.width + Math.random() * 100;
@@ -153,17 +154,17 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
           tree.size = Math.random() * (treeSizeRange[1] - treeSizeRange[0]) + treeSizeRange[0];
         }
       });
-    
+
       // Draw trees behind the car
       treesBehindCar.forEach((tree) => {
         const treeWidth = treeImage.current.naturalWidth * tree.size;
         const treeHeight = treeImage.current.naturalHeight * tree.size;
         ctx.drawImage(treeImage.current, tree.x - treeWidth / 2, tree.y - treeHeight, treeWidth, treeHeight);
       });
-    
+
       // Draw the racecar
       drawRacecar();
-    
+
       // Draw trees in front of the car
       treesInFrontOfCar.forEach((tree) => {
         const treeWidth = treeImage.current.naturalWidth * tree.size;
@@ -187,11 +188,30 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
       cloudPosition3.current = drawLayer(cloudImage3.current, cloudPosition3.current, baseSpeeds.cloudSpeed3, 75, 200, 3, deltaTime);
       groundPosition.current = drawLayer(groundImage.current, groundPosition.current, baseSpeeds.groundSpeed, -40, 400, 2, deltaTime);
       roadPosition.current = drawLayer(roadImage.current, roadPosition.current, baseSpeeds.roadSpeed, -65, 400, 2, deltaTime);
-      spawnAndDrawTrees(deltaTime); 
+      spawnAndDrawTrees(deltaTime);
+      drawPromptAndOptions();
       if (showWinMessage) {
         drawWinMessage();
       }
       ctx.restore(); // Restore the state
+    };
+
+    // Function to draw the prompt and options
+    const drawPromptAndOptions = () => {
+      const backdropX = (canvas.width / 2 / scaleFactor) - (200 * scaleFactor);
+      const backdropY = 225 * scaleFactor;
+      const backdropWidth = 400 * scaleFactor;
+      const backdropHeight = 100 * scaleFactor;
+
+      // Draw the backdrop square
+      ctx.fillStyle = "rgba(145, 116, 60, 1)";
+      ctx.fillRect(backdropX, backdropY, backdropWidth, backdropHeight);
+
+      // Draw the prompt
+      ctx.fillStyle = "white";
+      ctx.font = `${20 * scaleFactor}px Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(prompt, canvas.width / 2 / scaleFactor, 250 * scaleFactor);
     };
 
     // Linear interpolation function for smooth movement
@@ -220,7 +240,10 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
       requestAnimationFrame(animate);
     };
 
-  }, [activeQuestionIndex, questionsInSet, showWinMessage, speedMultiplier, scaleFactor]);
+    return () => {
+      // Cleanup function
+    };
+  }, [activeQuestionIndex, questionsInSet, showWinMessage, speedMultiplier, scaleFactor, prompt, options, handleOptionClick]);
 
   useEffect(() => {
     if (isCorrect) {
@@ -231,15 +254,26 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
   }, [activeQuestionIndex, isCorrect]);
 
   return (
-    <div>
+    <div className="game-container">
       <canvas
         ref={canvasRef}
         data-testid="GameCanvas"
         id="GameCanvas"
         width={600 * scaleFactor} // Adjust canvas width based on scaleFactor
-        height={350 * scaleFactor} // Adjust canvas height based on scaleFactor
+        height={450 * scaleFactor} // Adjust canvas height based on scaleFactor
         style={{ backgroundColor: "black" }}
       ></canvas>
+      <div className="options-container">
+        {options.map((option, index) => (
+          <button
+            key={index}
+            className="option-button"
+            onClick={() => handleOptionClick(option)}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
