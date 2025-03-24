@@ -26,7 +26,8 @@ function GamePage() {
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched questions:", data);
-        setQuestions(data); 
+        setQuestions(data);
+        setActiveQuestionIndex(0); // Reset active question index
       })
       .catch((err) => {
         console.log(err.message);
@@ -92,6 +93,7 @@ function GamePage() {
       .then((response) => response.json())
       .then((data) => {
         setQuestions(data);
+        setActiveQuestionIndex(0); // Reset active question index
       })
       .catch((err) => {
         console.log(err.message);
@@ -101,6 +103,7 @@ function GamePage() {
   // Handle Difficulty selection
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
+    setActiveQuestionIndex(0); // Reset active question index
   };
 
   // Once user has answered all questions, display score and continue button
@@ -140,6 +143,11 @@ function GamePage() {
         </div>
       </div>
     );
+  }
+
+  // Check if questions are loaded before rendering GameCanvas
+  if (questions.length === 0) {
+    return <div>Loading...</div>;
   }
 
   return (
