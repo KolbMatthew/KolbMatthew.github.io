@@ -69,7 +69,7 @@ case $choice in
         cd $PROJECT_DIR/frontend || return
 
         # build npm frontend
-        npm install &>$LOGS_DIR/frontend-install.log && npm start &>$LOGS_DIR/frontend-start.log
+        npm install &>$LOGS_DIR/frontend-install.log && npm start &>$LOGS_DIR/frontend-start.log & disown $!
         ;;
     5)# Start backend
         printf "\nStarting backend using mvnw spring-boot:run\n\n"
@@ -94,7 +94,7 @@ case $choice in
         cd $PROJECT_DIR/frontend || return
 
         # build npm frontend
-        npm install &>$LOGS_DIR/frontend-install.log && npm start &>$LOGS_DIR/frontend-start.log
+        npm install &>$LOGS_DIR/frontend-install.log && npm start &>$LOGS_DIR/frontend-start.log & disown $!
 
         # Start backend
         printf "\nStarting backend using mvnw spring-boot:run\n\n"
