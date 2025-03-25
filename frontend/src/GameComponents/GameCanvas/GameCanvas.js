@@ -140,7 +140,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     } else {
       setSpeedMultiplier((prev) => Math.max(1, prev - 0.02));
     }
-  }, [activeQuestionIndex, isCorrect]);
+  }, [isCorrect]);
 
   const drawLayer = (ctx, image, position, speed, y, height, loops, deltaTime, offset = 0) => {
     const width = image.naturalWidth * (height / image.naturalHeight);
