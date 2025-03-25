@@ -217,11 +217,6 @@ function GamePage() {
           </h2>
         </div>
 
-        <button onClick={handleInstantCorrect}>Get Correct Answer</button>
-      </div>
-
-      <div>
-        <h2>Score: {score}</h2>
       </div>
 
       <div>
@@ -233,7 +228,7 @@ function GamePage() {
         <button onClick={handleDebugCorrect}>Get Correct Answer</button>
         <button onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
       </div>
-    </>
+    </div>
   );
 }
 
