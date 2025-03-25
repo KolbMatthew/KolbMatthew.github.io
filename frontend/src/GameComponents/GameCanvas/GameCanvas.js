@@ -32,8 +32,12 @@ function GameCanvas({
   isCorrect,
   prompt,
   options,
-  handleOptionClick
+  handleOptionClick,
+  speedMultiplier
 }) {
+  // State and refs
+  const speedMultiplierRef = useRef(speedMultiplier);
+
   // Canvas and images
   const canvasRef = useRef(null);
   const carImage = useRef(new Image());
@@ -66,9 +70,6 @@ function GameCanvas({
 
   // Tree state
   const treePositions = useRef([]);
-
-  // Speed multiplier
-  const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
   // Image Loading 
   const loadImages = useCallback(() => {
@@ -118,7 +119,7 @@ function GameCanvas({
     const naturalAspect = image.naturalWidth / image.naturalHeight;
     const renderedWidth = renderedHeight * naturalAspect;
     const posX = positionRef.current;
-
+  
     // Draw the repeated images horizontally side-by-side
     for (let i = 0; i < loops; i++) {
       ctx.drawImage(
@@ -129,9 +130,9 @@ function GameCanvas({
         renderedHeight
       );
     }
-
-    // Update position
-    positionRef.current -= speed * speedMultiplier * deltaTime;
+  
+    // Use the current speed multiplier from the ref
+    positionRef.current -= speed * speedMultiplierRef.current * deltaTime;
     // If the entire image scrolled off screen, reset
     if (positionRef.current <= -renderedWidth) {
       positionRef.current += renderedWidth;
@@ -171,7 +172,7 @@ function GameCanvas({
 
         // Randomly decide if this tree is in the "top" cluster or "bottom" cluster:
         const isTop = Math.random() < 0.5;
-        const [minY, maxY] = isTop ? [250, 300] : [300, 400];
+        const [minY, maxY] = isTop ? [260, 260] : [350, 350];
         const y = Math.random() * (maxY - minY) + minY;
 
         // Scale the tree by a random factor
@@ -184,7 +185,7 @@ function GameCanvas({
     // Move and re-spawn any off-screen trees
     treePositions.current.forEach((tree) => {
       const width = treeImage.current.naturalWidth * tree.size;
-      tree.x -= baseSpeeds.treeSpeed * speedMultiplier * deltaTime;
+      tree.x -= baseSpeeds.treeSpeed * speedMultiplierRef.current * deltaTime;
 
       // If the tree scrolled off screen to the left, put it back on the right
       if (tree.x + width < 0) {
@@ -192,7 +193,7 @@ function GameCanvas({
 
         // Randomly pick whether it goes to the top or bottom cluster again
         const isTop = Math.random() < 0.5;
-        const [minY, maxY] = isTop ? [250, 300] : [300, 400];
+        const [minY, maxY] = isTop ? [260, 260] : [350, 350];
         tree.y = Math.random() * (maxY - minY) + minY;
         tree.size = Math.random() * (0.2 - 0.09) + 0.09;
       }
@@ -305,7 +306,11 @@ function GameCanvas({
     }
 
     ctx.restore();
-  }, [showWinMessage, prompt]);
+  }, [showWinMessage, prompt, speedMultiplier]);
+
+  useEffect(() => {
+    speedMultiplierRef.current = speedMultiplier;
+  }, [speedMultiplier]);  
 
   // React lifecycle hooks
   useEffect(() => {
@@ -336,17 +341,7 @@ function GameCanvas({
     return () => {
       // Cleanup if needed
     };
-  }, [loadImages, updateRacecarPosition, renderScene]);
-
-  // Adjust speed multiplier based on correctness
-  useEffect(() => {
-    if (isCorrect) {
-      setSpeedMultiplier((prev) => prev + 0.6);
-    } else {
-      // Slowly return to at least 1
-      setSpeedMultiplier((prev) => Math.max(1, prev - 0.02));
-    }
-  }, [isCorrect]);
+  }, [loadImages, updateRacecarPosition, renderScene, speedMultiplier]);
 
   // Reset positions when the question index changes
   useEffect(() => {
@@ -354,11 +349,8 @@ function GameCanvas({
       racecarPositionX.current = 0;
       targetPositionX.current = 0;
       treePositions.current = [];
-      // Reset other positions or speeds as needed
-      setSpeedMultiplier(1);
     }
   }, [activeQuestionIndex]);
-  
 
   return (
     <div className="game-container">

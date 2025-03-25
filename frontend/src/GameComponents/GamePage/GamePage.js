@@ -8,13 +8,14 @@ function GamePage() {
   const [questions, setQuestions] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [questionsInSet] = useState(7);
+  const [questionsInSet] = useState(10);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
   const [showDifficultySelection, setShowDifficultySelection] = useState(true);
   const [timeLeft, setTimeLeft] = useState(60000);
   const [showWinMessage, setShowWinMessage] = useState(false); 
   const [isCorrect, setIsCorrect] = useState(null);
+  const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
   // Fetch questions from backend
   useEffect(() => {
@@ -86,7 +87,6 @@ function GamePage() {
       setOutput("Incorrect!");
       setIsCorrect(false);
       setScore(score - 10);
-    setIsCorrect(true);
     }
   };
 
@@ -125,6 +125,28 @@ function GamePage() {
     const milliseconds = Math.floor((time % 1000) / 10);
     return `${seconds}.${milliseconds.toString().padStart(2, '0')}`;
   };
+
+  useEffect(() => {
+    if (isCorrect === null) return;
+
+    if (isCorrect) {
+      // Increase speed
+      setSpeedMultiplier((prev) => {
+        const newMultiplier = prev + 0.1;
+        console.log(`Speed multiplier increased to ${newMultiplier} (correct).`);
+        return newMultiplier;
+      });
+    } else {
+      // Decrease speed
+      setSpeedMultiplier((prev) => {
+        const newMultiplier = Math.max(0.5, prev - 0.1);
+        console.log(`Speed multiplier decreased to ${newMultiplier} (incorrect).`);
+        return newMultiplier;
+      });
+    }
+    setIsCorrect(null);
+  }, [isCorrect]);
+
 
   // Debug functions
   const handleDebugCorrect = () => {
@@ -204,6 +226,7 @@ function GamePage() {
         prompt={prompt}
         options={options}
         handleOptionClick={handleOptionClick}
+        speedMultiplier={speedMultiplier} 
       />
 
       <div className="question-container">
