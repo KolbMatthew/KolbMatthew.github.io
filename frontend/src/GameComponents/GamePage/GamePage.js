@@ -8,10 +8,12 @@ function GamePage() {
   const [questions, setQuestions] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [questionsInSet] = useState(5);
+  const [questionsInSet] = useState(7);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
-  const [showWinMessage, setShowWinMessage] = useState(false);
+  const [showDifficultySelection, setShowDifficultySelection] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(60000);
+  const [showWinMessage, setShowWinMessage] = useState(false); 
   const [isCorrect, setIsCorrect] = useState(null);
 
   // Fetch questions from backend
@@ -34,12 +36,29 @@ function GamePage() {
       });
   }, [difficulty, questionsInSet]);
 
+  // Timer effect
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setGameOver(true);
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 10);
+    }, 10);
+
+    return () => clearInterval(timerId);
+  }, [timeLeft]);
+
   // Function to move to next question
   const nextQuestion = () => {
-    if (activeQuestionIndex < questionsInSet - 1) {
+    if (activeQuestionIndex < questions.length - 1) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
     } else {
-      setShowWinMessage(true);
+      // Calculate additional points based on remaining time
+      const additionalPoints = Math.floor(timeLeft / 1000); // 1 point per second left
+      setScore((prevScore) => prevScore + additionalPoints);
+      setShowWinMessage(true); // Show win message
       setTimeout(() => {
         setGameOver(true);
       }, 3000); // 3-second delay before setting game over
@@ -66,15 +85,9 @@ function GamePage() {
     } else {
       setOutput("Incorrect!");
       setIsCorrect(false);
-    }
-  };
-
-  // Handle instant correct answer
-  const handleInstantCorrect = () => {
-    setOutput("Correct!");
-    setScore(score + 10);
+      setScore(score - 10);
     setIsCorrect(true);
-    nextQuestion();
+    }
   };
 
   // Handle continue button and difficulty selection
@@ -82,8 +95,8 @@ function GamePage() {
     setActiveQuestionIndex(0);
     setScore(0);
     setGameOver(false);
-    setShowWinMessage(false);
-    setOutput("Select an answer to get started!");
+    setShowWinMessage(false); // Reset win message
+    setTimeLeft(60000);
     fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
       method: "GET",
       headers: {
@@ -104,7 +117,38 @@ function GamePage() {
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
     setActiveQuestionIndex(0); // Reset active question index
+    setShowDifficultySelection(false);
   };
+
+  const formatTime = (time) => {
+    const seconds = Math.floor(time / 1000);
+    const milliseconds = Math.floor((time % 1000) / 10);
+    return `${seconds}.${milliseconds.toString().padStart(2, '0')}`;
+  };
+
+  // Debug functions
+  const handleDebugCorrect = () => {
+    handleOptionClick(activeQuestion.correctAnswer);
+  };
+
+  const handleDebugIncorrect = () => {
+    const incorrectOption = options.find(option => option !== activeQuestion.correctAnswer);
+    handleOptionClick(incorrectOption);
+  };
+
+  if (showDifficultySelection) {
+    return (
+      <div>
+        <h3>Select Difficulty:</h3>
+        <div>
+          <button onClick={() => handleDifficultyChange(1)}>Easy</button>
+          <button onClick={() => handleDifficultyChange(2)}>Medium</button>
+          <button onClick={() => handleDifficultyChange(3)}>Hard</button>
+          <button onClick={() => handleDifficultyChange(4)}>Extreme</button>
+        </div>
+      </div>
+    );
+  }
 
   // Once user has answered all questions, display score and continue button
   if (gameOver) {
@@ -155,7 +199,7 @@ function GamePage() {
       <GameCanvas
         activeQuestionIndex={activeQuestionIndex}
         questionsInSet={questionsInSet}
-        showWinMessage={showWinMessage}
+        showWinMessage={showWinMessage} // Pass showWinMessage to GameCanvas
         isCorrect={isCorrect}
         prompt={prompt}
         options={options}
@@ -175,7 +219,21 @@ function GamePage() {
 
         <button onClick={handleInstantCorrect}>Get Correct Answer</button>
       </div>
-    </div>
+
+      <div>
+        <h2>Score: {score}</h2>
+      </div>
+
+      <div>
+        <h2>Time Left: {formatTime(timeLeft)} seconds</h2>
+      </div>
+
+      {/* Debug buttons */}
+      <div>
+        <button onClick={handleDebugCorrect}>Get Correct Answer</button>
+        <button onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
+      </div>
+    </>
   );
 }
 
