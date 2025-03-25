@@ -10,15 +10,6 @@ input {
   margin-top: 10px;
 }
 
-.title {
-  font-family: 'Playwrite PL', sans-serif;
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 40px;
-  font-size: 80px;
-  color: #4169E1;
-}
 
 h6 {
   margin: 0;

@@ -11,6 +11,8 @@ import treeImageASrc from "../../site-images/Game/tree-A.png";
 import treeImageBSrc from "../../site-images/Game/tree-B.png";
 import treeImageCSrc from "../../site-images/Game/tree-C.png";
 import "./GameCanvas.css";
+<link rel="stylesheet" href="path/to/style.css" />
+
 
 const scaleFactor = 1.5;
 const baseSpeeds = {

@@ -6,6 +6,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./Form.css";
+import "../styles/style.css"; // Import the global styles
+
 
 function Form() {
   const navigate = useNavigate();
