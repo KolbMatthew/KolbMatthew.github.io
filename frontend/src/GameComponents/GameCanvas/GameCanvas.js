@@ -25,10 +25,17 @@ const baseSpeeds = {
   treeSpeed: 60,
 };
 
-function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCorrect, prompt, options, handleOptionClick }) {
+function GameCanvas({
+  activeQuestionIndex,
+  questionsInSet,
+  showWinMessage,
+  isCorrect,
+  prompt,
+  options,
+  handleOptionClick
+}) {
+  // Canvas and images
   const canvasRef = useRef(null);
-  const racecarPosition = useRef(0);
-  const targetPosition = useRef(0);
   const carImage = useRef(new Image());
   const sunImage = useRef(new Image());
   const sunsetImage = useRef(new Image());
@@ -41,19 +48,29 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
   const mountainImage2 = useRef(new Image());
   const mountainImage3 = useRef(new Image());
   const treeImage = useRef(new Image());
-  const sunPosition = useRef(0);
-  const sunsetPosition = useRef(0);
-  const cloudPosition = useRef(0);
-  const cloudPosition2 = useRef(0);
-  const cloudPosition3 = useRef(0);
-  const groundPosition = useRef(0);
-  const roadPosition = useRef(0);
-  const mountainPosition1 = useRef(0);
-  const mountainPosition2 = useRef(0);
-  const mountainPosition3 = useRef(0);
+
+  // Positions
+  const racecarPositionX = useRef(0);
+  const targetPositionX = useRef(0);
+
+  const sunPositionX = useRef(0);
+  const sunsetPositionX = useRef(0);
+  const cloudPositionX = useRef(0);
+  const cloudPositionX2 = useRef(0);
+  const cloudPositionX3 = useRef(0);
+  const groundPositionX = useRef(0);
+  const roadPositionX = useRef(0);
+  const mountainPosition1X = useRef(0);
+  const mountainPosition2X = useRef(0);
+  const mountainPosition3X = useRef(0);
+
+  // Tree state
   const treePositions = useRef([]);
+
+  // Speed multiplier
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
+  // Image Loading 
   const loadImages = useCallback(() => {
     carImage.current.src = carImageSrc;
     sunImage.current.src = sunImageSrc;
@@ -69,60 +86,247 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     treeImage.current.src = treeImageSrc;
   }, []);
 
+  // Animation/Position Update
+  const lerp = (start, end, t) => start * (1 - t) + end * t;
+
+  // Update the racecar’s X position based on current question progress.
+
   const updateRacecarPosition = useCallback(() => {
-    if (!canvasRef.current) return; // Ensure canvas is rendered
+    if (!canvasRef.current) return;
     const carWidth = carImage.current.naturalWidth;
-    targetPosition.current = (activeQuestionIndex / questionsInSet) * (canvasRef.current.width / scaleFactor + carWidth * 2) * 0.75;
-    racecarPosition.current = lerp(racecarPosition.current, targetPosition.current, 0.02);
+
+    // Racecar drives from left to right as questions progress
+    const maxCarTravelX = (canvasRef.current.width / scaleFactor) + (carWidth * 2);
+    targetPositionX.current = (activeQuestionIndex / questionsInSet) * maxCarTravelX * 0.75;
+
+    // Smooth out movement (linear interpolation)
+    racecarPositionX.current = lerp(racecarPositionX.current, targetPositionX.current, 0.02);
   }, [activeQuestionIndex, questionsInSet]);
 
-  const updateCanvas = useCallback((ctx, deltaTime) => {
-    if (!canvasRef.current) return; // Ensure canvas is rendered
-    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+  // Draw a repeating, scrolling layer of an image (like clouds, road, mountains, etc.)
+  const drawScrollingLayer = (
+    ctx,
+    image,
+    positionRef,
+    speed,
+    y,
+    renderedHeight,
+    loops,
+    deltaTime,
+    offsetX = 0
+  ) => {
+    const naturalAspect = image.naturalWidth / image.naturalHeight;
+    const renderedWidth = renderedHeight * naturalAspect;
+    const posX = positionRef.current;
+
+    // Draw the repeated images horizontally side-by-side
+    for (let i = 0; i < loops; i++) {
+      ctx.drawImage(
+        image,
+        posX + i * (renderedWidth - 1) + offsetX,
+        y,
+        renderedWidth,
+        renderedHeight
+      );
+    }
+
+    // Update position
+    positionRef.current -= speed * speedMultiplier * deltaTime;
+    // If the entire image scrolled off screen, reset
+    if (positionRef.current <= -renderedWidth) {
+      positionRef.current += renderedWidth;
+    }
+  };
+
+  // Draw the racecar
+  const drawRacecar = (ctx) => {
+    const carW = carImage.current.naturalWidth;
+    const carH = carImage.current.naturalHeight;
+    const aspectRatio = carW / carH;
+    const finalHeight = 50; // fixed height for the car
+    const finalWidth = finalHeight * aspectRatio;
+
+    ctx.drawImage(
+      carImage.current,
+      racecarPositionX.current,
+      250, // Racecar's Y position
+      finalWidth,
+      finalHeight
+    );
+  };
+
+  // Spawn trees if we have none, then move and draw them. Trees behind the racecar
+
+  const updateAndDrawTrees = (ctx, deltaTime) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // If no trees have been spawned, populate initial array
+    if (treePositions.current.length === 0) {
+      const spacing = 40;
+      const count = Math.floor(canvas.width / spacing);
+
+      for (let i = 0; i < count; i++) {
+        const x = canvas.width + i * spacing;
+
+        // Randomly decide if this tree is in the "top" cluster or "bottom" cluster:
+        const isTop = Math.random() < 0.5;
+        const [minY, maxY] = isTop ? [250, 300] : [300, 400];
+        const y = Math.random() * (maxY - minY) + minY;
+
+        // Scale the tree by a random factor
+        const size = Math.random() * (0.2 - 0.09) + 0.09;
+
+        treePositions.current.push({ x, y, size });
+      }
+    }
+
+    // Move and re-spawn any off-screen trees
+    treePositions.current.forEach((tree) => {
+      const width = treeImage.current.naturalWidth * tree.size;
+      tree.x -= baseSpeeds.treeSpeed * speedMultiplier * deltaTime;
+
+      // If the tree scrolled off screen to the left, put it back on the right
+      if (tree.x + width < 0) {
+        tree.x = canvas.width + Math.random() * 100;
+
+        // Randomly pick whether it goes to the top or bottom cluster again
+        const isTop = Math.random() < 0.5;
+        const [minY, maxY] = isTop ? [250, 300] : [300, 400];
+        tree.y = Math.random() * (maxY - minY) + minY;
+        tree.size = Math.random() * (0.2 - 0.09) + 0.09;
+      }
+    });
+
+    // Separate trees behind vs. in front of car
+    const treesBehindCar = treePositions.current.filter((t) => t.y < 250);
+    const treesInFrontOfCar = treePositions.current.filter((t) => t.y >= 250);
+
+    // Draw behind-car trees
+    drawTreesArray(ctx, treesBehindCar);
+
+    // Draw the racecar itself
+    drawRacecar(ctx);
+
+    // Draw front-of-car trees
+    drawTreesArray(ctx, treesInFrontOfCar);
+  };
+
+  // Draw a batch of trees from an array of tree objects { x, y, size }.
+  const drawTreesArray = (ctx, trees) => {
+    trees.forEach((tree) => {
+      const tw = treeImage.current.naturalWidth * tree.size;
+      const th = treeImage.current.naturalHeight * tree.size;
+      ctx.drawImage(treeImage.current, tree.x - tw / 2, tree.y - th, tw, th);
+    });
+  };
+
+  // Draw the final "You Win!" overlay in the center of the canvas.
+  const drawWinMessage = (ctx) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    ctx.fillStyle = "rgb(113, 34, 5)";
+    ctx.font = `${48 * scaleFactor}px 'Alkaline Regular'`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // Outline
+    ctx.lineWidth = 3;
+    ctx.strokeText(
+      "You Win!",
+      (canvas.width / 2) / scaleFactor,
+      (canvas.height / 2) / scaleFactor
+    );
+    // Fill
+    ctx.fillText(
+      "You Win!",
+      (canvas.width / 2) / scaleFactor,
+      (canvas.height / 2) / scaleFactor
+    );
+  };
+
+  // Draw the question prompt in a box near the top of the canvas.
+  const drawPrompt = (ctx) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const boxWidth = 400 * scaleFactor;
+    const boxHeight = 100 * scaleFactor;
+    const boxX = (canvas.width / 2 / scaleFactor) - (boxWidth / 2);
+    const boxY = 225 * scaleFactor;
+
+    // Backdrop
+    ctx.fillStyle = "rgba(145, 116, 60, 1)";
+    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+    // Prompt text
+    ctx.fillStyle = "white";
+    ctx.font = `${20 * scaleFactor}px Courier New`;
+    ctx.textAlign = "center";
+    ctx.fillText(prompt, (canvas.width / 2) / scaleFactor, 250 * scaleFactor);
+  };
+
+  // Main draw routine for the entire scene, called each frame.
+  const renderScene = useCallback((ctx, deltaTime) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // Clear entire canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Apply global scale for all subsequent draws
     ctx.save();
     ctx.scale(scaleFactor, scaleFactor);
 
-    sunsetPosition.current = drawLayer(ctx, sunsetImage.current, sunsetPosition.current, baseSpeeds.sunsetSpeed, 0, 300, 2, deltaTime);
-    sunPosition.current = drawLayer(ctx, sunImage.current, sunPosition.current, baseSpeeds.sunSpeed, 0, 200, 2, deltaTime);
-    cloudPosition.current = drawLayer(ctx, cloudImage.current, cloudPosition.current, baseSpeeds.cloudSpeed, 15, 50, 8, deltaTime);
-    mountainPosition1.current = drawLayer(ctx, mountainImage1.current, mountainPosition1.current, baseSpeeds.mountainSpeed1, 30, 600, 3, deltaTime);
-    mountainPosition2.current = drawLayer(ctx, mountainImage2.current, mountainPosition2.current, baseSpeeds.mountainSpeed2, 30, 300, 3, deltaTime, -100);
-    mountainPosition3.current = drawLayer(ctx, mountainImage3.current, mountainPosition3.current, baseSpeeds.mountainSpeed3, 30, 400, 3, deltaTime, 100);
-    cloudPosition2.current = drawLayer(ctx, cloudImage2.current, cloudPosition2.current, baseSpeeds.cloudSpeed2, 50, 100, 4, deltaTime);
-    cloudPosition3.current = drawLayer(ctx, cloudImage3.current, cloudPosition3.current, baseSpeeds.cloudSpeed3, 75, 200, 3, deltaTime);
-    groundPosition.current = drawLayer(ctx, groundImage.current, groundPosition.current, baseSpeeds.groundSpeed, -40, 400, 2, deltaTime);
-    roadPosition.current = drawLayer(ctx, roadImage.current, roadPosition.current, baseSpeeds.roadSpeed, -65, 400, 2, deltaTime);
+    // 1. Draw backgrounds / layered scenery
+    drawScrollingLayer(ctx, sunsetImage.current, sunsetPositionX, baseSpeeds.sunsetSpeed, 0, 300, 2, deltaTime);
+    drawScrollingLayer(ctx, sunImage.current, sunPositionX, baseSpeeds.sunSpeed, 0, 200, 2, deltaTime);
+    drawScrollingLayer(ctx, cloudImage.current, cloudPositionX, baseSpeeds.cloudSpeed, 15, 50, 8, deltaTime);
 
-    spawnAndDrawTrees(ctx, deltaTime);
-    drawPromptAndOptions(ctx);
+    drawScrollingLayer(ctx, mountainImage1.current, mountainPosition1X, baseSpeeds.mountainSpeed1, 30, 600, 3, deltaTime);
+    drawScrollingLayer(ctx, mountainImage2.current, mountainPosition2X, baseSpeeds.mountainSpeed2, 30, 300, 3, deltaTime, -100);
+    drawScrollingLayer(ctx, mountainImage3.current, mountainPosition3X, baseSpeeds.mountainSpeed3, 30, 400, 3, deltaTime, 100);
 
+    drawScrollingLayer(ctx, cloudImage2.current, cloudPositionX2, baseSpeeds.cloudSpeed2, 50, 100, 4, deltaTime);
+    drawScrollingLayer(ctx, cloudImage3.current, cloudPositionX3, baseSpeeds.cloudSpeed3, 75, 200, 3, deltaTime);
+    drawScrollingLayer(ctx, groundImage.current, groundPositionX, baseSpeeds.groundSpeed, -40, 400, 2, deltaTime);
+    drawScrollingLayer(ctx, roadImage.current, roadPositionX, baseSpeeds.roadSpeed, -65, 400, 2, deltaTime);
+
+    // 2. Update and draw trees + racecar
+    updateAndDrawTrees(ctx, deltaTime);
+
+    // 3. Draw the prompt area
+    drawPrompt(ctx);
+
+    // 4. If the user has won, overlay a message
     if (showWinMessage) {
       drawWinMessage(ctx);
     }
 
     ctx.restore();
-  }, [showWinMessage, prompt, options]);
+  }, [showWinMessage, prompt]);
 
+  // React lifecycle hooks
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return; // Ensure canvas is rendered
+    if (!canvasRef.current) return;
+    const ctx = canvasRef.current.getContext("2d");
 
-    const ctx = canvas.getContext("2d");
-
-    // Load images
+    // Load image resources
     loadImages();
 
     let lastTime = performance.now();
 
     const animate = (time) => {
-      const deltaTime = (time - lastTime) / 1000; // Convert to seconds
+      const deltaTime = (time - lastTime) / 1000; // in seconds
       lastTime = time;
 
       updateRacecarPosition();
-      updateCanvas(ctx, deltaTime);
+      renderScene(ctx, deltaTime);
       requestAnimationFrame(animate);
     };
 
+    // Start animation once the car image is ready
     carImage.current.onload = () => {
       if (canvasRef.current) {
         requestAnimationFrame(animate);
@@ -130,120 +334,31 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     };
 
     return () => {
-      // Cleanup function
+      // Cleanup if needed
     };
-  }, [loadImages, updateRacecarPosition, updateCanvas]);
+  }, [loadImages, updateRacecarPosition, renderScene]);
 
+  // Adjust speed multiplier based on correctness
   useEffect(() => {
     if (isCorrect) {
       setSpeedMultiplier((prev) => prev + 0.6);
     } else {
+      // Slowly return to at least 1
       setSpeedMultiplier((prev) => Math.max(1, prev - 0.02));
     }
   }, [isCorrect]);
 
-  const drawLayer = (ctx, image, position, speed, y, height, loops, deltaTime, offset = 0) => {
-    const width = image.naturalWidth * (height / image.naturalHeight);
-    for (let i = 0; i < loops; i++) {
-      ctx.drawImage(image, position + i * (width - 1) + offset, y, width, height);
+  // Reset positions when the question index changes
+  useEffect(() => {
+    if (activeQuestionIndex === 0) {
+      racecarPositionX.current = 0;
+      targetPositionX.current = 0;
+      treePositions.current = [];
+      // Reset other positions or speeds as needed
+      setSpeedMultiplier(1);
     }
-    position -= speed * speedMultiplier * deltaTime;
-    if (position <= -width) {
-      position += width;
-    }
-    return position;
-  };
-
-  const drawRacecar = (ctx) => {
-    const carWidth = carImage.current.naturalWidth;
-    const carHeight = carImage.current.naturalHeight;
-    const aspectRatio = carWidth / carHeight;
-    const height = 50;
-    const width = height * aspectRatio;
-    ctx.drawImage(carImage.current, racecarPosition.current, 250, width, height);
-  };
-
-  const drawWinMessage = (ctx) => {
-    ctx.fillStyle = 'rgb(113, 34, 5)';
-    ctx.font = `${48 * scaleFactor}px 'Alkaline Regular'`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.lineWidth = 3;
-    ctx.strokeText("You Win!", canvasRef.current.width / 2 / scaleFactor, canvasRef.current.height / 2 / scaleFactor);
-    ctx.fillText("You Win!", canvasRef.current.width / 2 / scaleFactor, canvasRef.current.height / 2 / scaleFactor);
-  };
-
-  const spawnAndDrawTrees = (ctx, deltaTime) => {
-    const treeSpacing = 40;
-    const topTreeYRange = [250, 350];
-    const bottomTreeYRange = [350, 400];
-    const treeSizeRange = [0.09, 0.2];
-    const treeCount = Math.floor(canvasRef.current.width / treeSpacing);
-
-    if (treePositions.current.length === 0) {
-      const newTreePositions = [];
-      for (let i = 0; i < treeCount; i++) {
-        const x = i * treeSpacing + canvasRef.current.width;
-        const y = Math.random() < 0.5 ? topTreeYRange[0] : bottomTreeYRange[0];
-        const size = Math.random() * (treeSizeRange[1] - treeSizeRange[0]) + treeSizeRange[0];
-        newTreePositions.push({ x, y, size });
-      }
-      treePositions.current = newTreePositions;
-    }
-
-    const treesBehindCar = [];
-    const treesInFrontOfCar = [];
-
-    treePositions.current.forEach((tree) => {
-      const treeWidth = treeImage.current.naturalWidth * tree.size;
-      const treeHeight = treeImage.current.naturalHeight * tree.size;
-      if (tree.y < 30) {
-        treesBehindCar.push(tree);
-      } else {
-        treesInFrontOfCar.push(tree);
-      }
-      tree.x -= baseSpeeds.treeSpeed * speedMultiplier * deltaTime;
-
-      if (tree.x + treeWidth < 0) {
-        tree.x = canvasRef.current.width + Math.random() * 100;
-        tree.y = Math.random() < 0.5 ? topTreeYRange[0] : bottomTreeYRange[0];
-        tree.size = Math.random() * (treeSizeRange[1] - treeSizeRange[0]) + treeSizeRange[0];
-      }
-    });
-
-    treesBehindCar.forEach((tree) => {
-      const treeWidth = treeImage.current.naturalWidth * tree.size;
-      const treeHeight = treeImage.current.naturalHeight * tree.size;
-      ctx.drawImage(treeImage.current, tree.x - treeWidth / 2, tree.y - treeHeight, treeWidth, treeHeight);
-    });
-
-    drawRacecar(ctx);
-
-    treesInFrontOfCar.forEach((tree) => {
-      const treeWidth = treeImage.current.naturalWidth * tree.size;
-      const treeHeight = treeImage.current.naturalHeight * tree.size;
-      ctx.drawImage(treeImage.current, tree.x - treeWidth / 2, tree.y - treeHeight, treeWidth, treeHeight);
-    });
-  };
-
-  const drawPromptAndOptions = (ctx) => {
-    const backdropX = (canvasRef.current.width / 2 / scaleFactor) - (200 * scaleFactor);
-    const backdropY = 225 * scaleFactor;
-    const backdropWidth = 400 * scaleFactor;
-    const backdropHeight = 100 * scaleFactor;
-
-    ctx.fillStyle = "rgba(145, 116, 60, 1)";
-    ctx.fillRect(backdropX, backdropY, backdropWidth, backdropHeight);
-
-    ctx.fillStyle = "white";
-    ctx.font = `${20 * scaleFactor}px Courier New`;
-    ctx.textAlign = "center";
-    ctx.fillText(prompt, canvasRef.current.width / 2 / scaleFactor, 250 * scaleFactor);
-  };
-
-  const lerp = (start, end, t) => {
-    return start * (1 - t) + end * t;
-  };
+  }, [activeQuestionIndex]);
+  
 
   return (
     <div className="game-container">
@@ -254,7 +369,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
         width={600 * scaleFactor}
         height={450 * scaleFactor}
         style={{ backgroundColor: "black" }}
-      ></canvas>
+      />
       <div className="options-container">
         {options.map((option, index) => (
           <button
