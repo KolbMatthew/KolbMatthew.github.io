@@ -332,11 +332,11 @@ function GameCanvas({
     ctx.strokeStyle = "rgb(232, 41, 12)"; 
     ctx.stroke();
   
-    // Display remaining time in 00:00 format in the center.
+    // Display remaining time in 0:00 format in the center.
     const remainingSeconds = Math.ceil(remainingTime / 1000);
-    const minutes = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+    const minutes = Math.floor(remainingSeconds / 60).toString();
     const seconds = (remainingSeconds % 60).toString().padStart(2, '0');
-    ctx.font = "bold 16px Courier New";
+    ctx.font = "bold 22px Courier New";
     ctx.fillStyle = "#000";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
