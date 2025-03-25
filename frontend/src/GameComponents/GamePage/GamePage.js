@@ -151,7 +151,7 @@ function GamePage() {
   }
 
   return (
-    <div className="game-container">
+    <div className="prompt-output">
       <GameCanvas
         activeQuestionIndex={activeQuestionIndex}
         questionsInSet={questionsInSet}
@@ -168,7 +168,9 @@ function GamePage() {
         </h2>
 
         <div>
-          <h2>Score: {score}</h2>
+          <h2 id="result-output" data-testid="result-output">
+            Score: {score}
+          </h2>
         </div>
 
         <button onClick={handleInstantCorrect}>Get Correct Answer</button>

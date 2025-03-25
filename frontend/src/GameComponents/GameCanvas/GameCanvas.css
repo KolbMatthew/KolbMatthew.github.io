@@ -3,9 +3,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Courier New', Courier, monospace;
+  border: 10px solid rgb(113, 34, 5);
 }
 
 .options-container {
+  font-family: 'Courier New', Courier, monospace;
   position: absolute;
   bottom: 20px;
   display: flex;
@@ -16,13 +19,21 @@
 .option-button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: blue;
-  color: white;
-  border: none;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: rgb(255, 91, 71);
+  color: rgb(113, 34, 5);
+  border: 2px solid rgb(113, 34, 5);
   border-radius: 5px;
   cursor: pointer;
 }
 
 .option-button:hover {
-  background-color: darkblue;
+  background-color: rgb(229, 103, 23);
+}
+
+@font-face {
+  font-family: 'Alkaline Regular';
+  src: url("../../site-fonts/AlkalineTest-Regular-BF676e1b6ca889c.otf") format('opentype');
+  font-weight: normal;
+  font-style: normal;
 }

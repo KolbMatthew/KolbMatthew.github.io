@@ -164,10 +164,12 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
   };
 
   const drawWinMessage = (ctx) => {
-    ctx.fillStyle = "black";
-    ctx.font = `${48 * scaleFactor}px Arial`;
+    ctx.fillStyle = 'rgb(113, 34, 5)';
+    ctx.font = `${48 * scaleFactor}px 'Alkaline Regular'`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
+    ctx.lineWidth = 3;
+    ctx.strokeText("You Win!", canvasRef.current.width / 2 / scaleFactor, canvasRef.current.height / 2 / scaleFactor);
     ctx.fillText("You Win!", canvasRef.current.width / 2 / scaleFactor, canvasRef.current.height / 2 / scaleFactor);
   };
 
@@ -234,7 +236,7 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage, isCor
     ctx.fillRect(backdropX, backdropY, backdropWidth, backdropHeight);
 
     ctx.fillStyle = "white";
-    ctx.font = `${20 * scaleFactor}px Arial`;
+    ctx.font = `${20 * scaleFactor}px Courier New`;
     ctx.textAlign = "center";
     ctx.fillText(prompt, canvasRef.current.width / 2 / scaleFactor, 250 * scaleFactor);
   };
