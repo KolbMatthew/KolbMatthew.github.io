@@ -1,9 +1,4 @@
-body {
-  display: flex;
-  justify-content: center;
-  background-color: lightgrey;
-  margin: 10;
-}
+
 
 input {
   margin-bottom: 10px;

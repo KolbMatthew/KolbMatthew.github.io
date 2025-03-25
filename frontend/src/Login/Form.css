@@ -148,29 +148,7 @@ textarea {
   margin-bottom: 15px;
 }
 
-.button {
-  border: 0;
-  outline: none;
-  padding: 15px 0;
-  font-size: 2rem;
-  font-weight: 600; /* $bold */
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  background: rgb(255, 91, 37); /* Updated color */
-  color: #ffffff; /* $white */
-  transition: all 0.5s ease;
-}
 
-.button:hover,
-.button:focus {
-  background: rgb(229, 103, 23); /* Updated color */
-}
-
-.button-block {
-  margin-bottom: 10px;
-  display: block;
-  width: 100%;
-}
 
 .forgot {
   margin-top: -20px;

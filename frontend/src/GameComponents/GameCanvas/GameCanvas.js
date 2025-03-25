@@ -11,8 +11,6 @@ import treeImageASrc from "../../site-images/Game/tree-A.png";
 import treeImageBSrc from "../../site-images/Game/tree-B.png";
 import treeImageCSrc from "../../site-images/Game/tree-C.png";
 import "./GameCanvas.css";
-<link rel="stylesheet" href="path/to/style.css" />
-
 
 const scaleFactor = 1.5;
 const baseSpeeds = {
@@ -38,9 +36,11 @@ function GameCanvas({
   options,
   handleOptionClick,
   speedMultiplier,
+  timeLeft 
 }) {
   // Refs and state
   const speedMultiplierRef = useRef(speedMultiplier);
+  const timeLeftRef = useRef(timeLeft);
 
   // Canvas and images
   const canvasRef = useRef(null);
@@ -105,7 +105,6 @@ function GameCanvas({
       loadedCount++;
       if (loadedCount === 3) {
         treesAreReady.current = true;
-        // Reset tree positions so they will be re-initialized with proper dimensions.
         treePositions.current = [];
       }
     };
@@ -128,8 +127,7 @@ function GameCanvas({
   const updateRacecarPosition = useCallback(() => {
     if (!canvasRef.current) return;
     const carWidth = carImage.current.naturalWidth;
-    const maxCarTravelX =
-      canvasRef.current.width / scaleFactor + carWidth * 2;
+    const maxCarTravelX = canvasRef.current.width / scaleFactor + carWidth * 2;
     targetPositionX.current =
       (activeQuestionIndex / questionsInSet) * maxCarTravelX * 0.75;
     racecarPositionX.current = lerp(
@@ -218,7 +216,6 @@ function GameCanvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Initialize trees only when images are ready.
     if (treePositions.current.length === 0 && treesAreReady.current) {
       const spacing = 40;
       const count = Math.floor(canvas.width / spacing);
@@ -238,7 +235,6 @@ function GameCanvas({
       }
     }
 
-    // Update tree positions and reset any that scroll off screen.
     treePositions.current.forEach((tree) => {
       const width = tree.treeImage.naturalWidth * tree.size;
       tree.x -= baseSpeeds.treeSpeed * speedMultiplierRef.current * deltaTime;
@@ -255,11 +251,10 @@ function GameCanvas({
         ][Math.floor(Math.random() * 3)];
         tree.brightness = Math.random() * 0.4 + 0.8;
         tree.isTop = isTop;
-        tree.renderedImage = null; // reset cached image
+        tree.renderedImage = null;
       }
     });
 
-    // Separate trees behind and in front of the racecar.
     const treesBehindCar = treePositions.current.filter((t) => t.isTop);
     const treesInFrontOfCar = treePositions.current.filter((t) => !t.isTop);
 
@@ -303,6 +298,49 @@ function GameCanvas({
     ctx.font = `${20 * scaleFactor}px Courier New`;
     ctx.textAlign = "center";
     ctx.fillText(prompt, canvas.width / (2 * scaleFactor), 250 * scaleFactor);
+  };
+
+  // --- Stopwatch Drawing Function ---
+  const drawStopwatch = (ctx, x, y, radius, remainingTime, totalTime) => {
+    // Draw clock face.
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "rgb(255, 226, 188)";
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#000";
+    ctx.stroke();
+  
+    // Draw stopwatch border with the same style as the canvas border.
+    ctx.lineWidth = 20;
+    ctx.strokeStyle = "rgb(113, 34, 5)"; 
+    ctx.stroke();
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "rgb(232, 41, 12)"; 
+    ctx.stroke();
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = "rgb(255, 91, 37)"; 
+    ctx.stroke();
+  
+    // Calculate fraction elapsed.
+    const fraction = 1 - remainingTime / totalTime;
+    const startAngle = -Math.PI / 2;
+    const endAngle = startAngle + fraction * 2 * Math.PI;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, startAngle, endAngle, false);
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "rgb(232, 41, 12)"; 
+    ctx.stroke();
+  
+    // Display remaining time in 00:00 format in the center.
+    const remainingSeconds = Math.ceil(remainingTime / 1000);
+    const minutes = Math.floor(remainingSeconds / 60).toString().padStart(2, '0');
+    const seconds = (remainingSeconds % 60).toString().padStart(2, '0');
+    ctx.font = "bold 16px Courier New";
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(`${minutes}:${seconds}`, x, y);
   };
 
   // Main render routine.
@@ -423,6 +461,10 @@ function GameCanvas({
       if (showWinMessage) {
         drawWinMessage(ctx);
       }
+      // --- Draw Stopwatch ---
+      // Position stopwatch in the top-right corner.
+      const logicalWidth = canvas.width / scaleFactor; // e.g., 600
+      drawStopwatch(ctx, logicalWidth - 70, 390, 40, timeLeftRef.current, 60000);
       ctx.restore();
     },
     [showWinMessage, prompt, speedMultiplier]
@@ -431,6 +473,11 @@ function GameCanvas({
   useEffect(() => {
     speedMultiplierRef.current = speedMultiplier;
   }, [speedMultiplier]);
+
+  // Update timeLeftRef whenever timeLeft prop changes.
+  useEffect(() => {
+    timeLeftRef.current = timeLeft;
+  }, [timeLeft]);
 
   // Main animation loop.
   useEffect(() => {

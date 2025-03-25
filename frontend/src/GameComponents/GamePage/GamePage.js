@@ -221,31 +221,28 @@ function GamePage() {
       <GameCanvas
         activeQuestionIndex={activeQuestionIndex}
         questionsInSet={questionsInSet}
-        showWinMessage={showWinMessage} // Pass showWinMessage to GameCanvas
+        showWinMessage={showWinMessage}
         isCorrect={isCorrect}
         prompt={prompt}
         options={options}
         handleOptionClick={handleOptionClick}
-        speedMultiplier={speedMultiplier} 
+        speedMultiplier={speedMultiplier}
+        timeLeft={timeLeft}
       />
 
-      <div className="question-container">
+  <div className="question-container">
         <h2 id="result-output" data-testid="result-output">
           {showOutput}
         </h2>
-
         <div>
           <h2 id="result-output" data-testid="result-output">
             Score: {score}
           </h2>
         </div>
-
       </div>
-
       <div>
         <h2>Time Left: {formatTime(timeLeft)} seconds</h2>
       </div>
-
       {/* Debug buttons */}
       <div>
         <button onClick={handleDebugCorrect}>Get Correct Answer</button>

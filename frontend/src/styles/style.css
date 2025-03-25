@@ -6,7 +6,7 @@
   }
   
   body {
-    background: #a9d8ed95; 
+    background: rgb(255, 226, 188); 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -172,29 +172,37 @@
     margin-bottom: 15px;
   }
   
-  .button {
-    border: 0;
+
+.button {
+    border: 10px;
     outline: none;
     padding: 15px 0;
     font-size: 2rem;
-    font-weight: 600; 
+    font-weight: 600; /* $bold */
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    background: rgb(255, 91, 37); 
-    color: #ffffff; 
+    background: rgb(255, 91, 37); /* Updated color */
+    color: #ffffff; /* $white */
+    border-radius: 15px; /* Rounded borders */
+    box-shadow: 
+      0 0 0 5px rgb(232, 41, 12), /* First layer */
+      0 0 0 10px rgb(113, 34, 5); /* Second layer */
     transition: all 0.5s ease;
-  }
-  
-  .button:hover,
-  .button:focus {
-    background: rgb(229, 103, 23); 
-  }
-  
-  .button-block {
-    margin-bottom: 10px;
     display: block;
-    width: 100%;
-  }
+    margin: 20px auto  auto;
+    text-align: center; 
+}
+.button:hover,
+.button:focus {
+    background: rgb(229, 103, 23); 
+}
+
+.button-block {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    display: block;
+    width: 50%;
+}
   
   .forgot {
     margin-top: -20px;
