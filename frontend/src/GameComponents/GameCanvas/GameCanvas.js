@@ -2,15 +2,15 @@ import { useEffect, useRef } from "react";
 import carImageSrc from "../../site-images/temp-racecar.png";
 import roadImageSrc from "../../site-images/Road.png";
 
-
 function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
   const canvasRef = useRef(null);
+  const animationFrameId = useRef(null);
 
   const racecarPosition = useRef(0);
   const targetPosition = useRef(0);
   const carImage = useRef(new Image());
   const travelDistance = 0.75; // Adjust this value to control the distance the car travels each time
-  const carSpeed = 0.02 // Adjust this value to control the "speed" of the car (lerp speed)
+  const carSpeed = 0.02; // Adjust this value to control the "speed" of the car (lerp speed)
 
   const roadPosition = useRef(0);
   const roadImage = useRef(new Image());
@@ -30,15 +30,12 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
     const drawTrack = () => {
       ctx.fillStyle = "gray";
       ctx.fillRect(0, canvas.height / 2 - 50, canvas.width, 100);
-      // ctx.fillStyle = "white";
-      // ctx.fillRect(0, canvas.height / 2 - 5, canvas.width, 10);
       const roadWidth = roadImage.current.naturalWidth;
       const roadHeight = roadImage.current.naturalHeight;
       const aspectRatio = roadWidth / roadHeight;
       const height = 150;
       const width = height * aspectRatio;
-      ctx.drawImage(roadImage.current, roadPosition.current, canvas.height / 2 - 5, width, height)
-
+      ctx.drawImage(roadImage.current, roadPosition.current, canvas.height / 2 - 5, width, height);
     };
 
     // Function to draw the racecar
@@ -81,17 +78,24 @@ function GameCanvas({ activeQuestionIndex, questionsInSet, showWinMessage }) {
       // Smoothly interpolate the racecar position
       racecarPosition.current = lerp(racecarPosition.current, targetPosition.current, carSpeed);
 
-      roadPosition.current = roadPosition.current - roadSpeed
-      if(roadPosition.current == -600){
+      roadPosition.current = roadPosition.current - roadSpeed;
+      if (roadPosition.current <= -600) {
         roadPosition.current = 0;
       }
       updateCanvas();
-      requestAnimationFrame(animate);
+      animationFrameId.current = requestAnimationFrame(animate);
     };
 
     // Start the animation once the car image is loaded
     carImage.current.onload = () => {
-      animate();
+      animationFrameId.current = requestAnimationFrame(animate);
+    };
+
+    // Cleanup function to cancel the animation frame
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
     };
   }, [activeQuestionIndex, questionsInSet, showWinMessage]);
 
