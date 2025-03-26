@@ -16,18 +16,25 @@ import dev._0.mindracers.math.MathPromptingProgram.MathProblem;
 @RequestMapping(path = "/game")
 public class ProblemController {
 
-  // return a List of MathProblem's with a specified difficulty
-  // default difficulty = 1
+  // return a List of MathProblem's with a specified difficulty and count
+  // default difficulty = 1, default count = 5
   @GetMapping("/getProblems")
-  public ArrayList<MathProblem> getProblems(@RequestParam(value = "difficulty", defaultValue = "1") int difficulty) {
+  public ArrayList<MathProblem> getProblems(
+      @RequestParam(value = "difficulty", defaultValue = "1") int difficulty,
+      @RequestParam(value = "count", defaultValue = "5") int count) {
+
+    System.out.println("Requested difficulty: " + difficulty);
+    System.out.println("Requested count: " + count);
 
     ArrayList<MathProblem> questionList = new ArrayList<>();
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < count; i++) {
       MathProblem mathProblem = MathPromptingProgram.generateProblem(difficulty);
       questionList.add(mathProblem);
+      System.out.println("Generated question " + (i + 1) + ": " + mathProblem.getProblemText());
     }
 
+    System.out.println("Total questions generated: " + questionList.size());
     return questionList;
   }
 
