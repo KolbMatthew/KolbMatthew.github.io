@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from "react";
-import carImageSrc from "../../site-images/temp-racecar.png";
+import carImageSrc from "../../site-images/car.png";
 import roadImageSrc from "../../site-images/Game/road.png";
 import sunImageSrc from "../../site-images/Game/sun.png";
 import sunsetImageSrc from "../../site-images/Game/sunset-background.png";
@@ -172,12 +172,12 @@ function GameCanvas({
     const carW = carImage.current.naturalWidth;
     const carH = carImage.current.naturalHeight;
     const aspectRatio = carW / carH;
-    const finalHeight = 50; // fixed height
+    const finalHeight = 25; // fixed height
     const finalWidth = finalHeight * aspectRatio;
     ctx.drawImage(
       carImage.current,
       racecarPositionX.current,
-      250,
+      265,
       finalWidth,
       finalHeight
     );
@@ -267,7 +267,7 @@ function GameCanvas({
   const drawWinMessage = (ctx) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    ctx.fillStyle = "rgb(113, 34, 5)";
+    ctx.fillStyle = "rgb(255, 58, 162)";
     ctx.font = `${48 * scaleFactor}px 'Alkaline Regular'`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
