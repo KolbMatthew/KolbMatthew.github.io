@@ -129,14 +129,14 @@ function GamePage() {
     if (isCorrect) {
       // Increase speed
       setSpeedMultiplier((prev) => {
-        const newMultiplier = prev + 0.1;
+        const newMultiplier = prev + 0.25;
         console.log(`Speed multiplier increased to ${newMultiplier} (correct).`);
         return newMultiplier;
       });
     } else {
       // Decrease speed
       setSpeedMultiplier((prev) => {
-        const newMultiplier = Math.max(0.5, prev - 0.1);
+        const newMultiplier = Math.max(0.5, prev - 1);
         console.log(`Speed multiplier decreased to ${newMultiplier} (incorrect).`);
         return newMultiplier;
       });

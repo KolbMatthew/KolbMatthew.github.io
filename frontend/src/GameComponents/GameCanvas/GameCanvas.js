@@ -305,7 +305,7 @@ function GameCanvas({
     // Draw clock face.
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = "rgb(255, 226, 188)";
+    ctx.fillStyle = "rgb(255, 91, 37)"; 
     ctx.fill();
     ctx.lineWidth = 3;
     ctx.strokeStyle = "#000";
@@ -319,7 +319,7 @@ function GameCanvas({
     ctx.strokeStyle = "rgb(232, 41, 12)"; 
     ctx.stroke();
     ctx.lineWidth = 10;
-    ctx.strokeStyle = "rgb(255, 91, 37)"; 
+    ctx.strokeStyle = "rgb(255, 226, 188)";
     ctx.stroke();
   
     // Calculate fraction elapsed.

@@ -52,25 +52,32 @@ function Form() {
       document.getElementById("sign-up").appendChild(output);
     }
 
-    if (response.ok) {
-      const jsonResponse = await response.json();
-      output.innerText = jsonResponse.success === 0
-      ? "User already registered with this email."
-      : "Registration Successful";
+    const responseText = await response.text();
+    console.log("Response text:", responseText);
 
-      if (jsonResponse.success === 1) {
-        setInputValues({
-          username: "",
-          email: "",
-          confirmEmail: "",
-          password: "",
-          password2: "",
-        });
+    if (response.ok) {
+      try {
+        const jsonResponse = JSON.parse(responseText);
+        output.innerText = jsonResponse.success === 0
+          ? "User already registered with this email."
+          : "Registration Successful";
+
+        if (jsonResponse.success === 1) {
+          setInputValues({
+            username: "",
+            email: "",
+            confirmEmail: "",
+            password: "",
+            password2: "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to parse JSON:", error);
+        alert("An error occurred while processing your request.");
       }
     } else {
-      const errorText = await response.text();
-      console.error("POST request failed:", response.status, errorText);
-      alert(`Error: ${response.status} - ${errorText}`);
+      console.error("POST request failed:", response.status, responseText);
+      alert(`Error: ${response.status} - ${responseText}`);
     }
   };
 
