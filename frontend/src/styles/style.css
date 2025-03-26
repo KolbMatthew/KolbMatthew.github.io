@@ -176,25 +176,27 @@
 .button {
     border: 10px;
     outline: none;
-    padding: 15px 0;
+    padding: 15px 15px;
     font-size: 2rem;
     font-weight: 600; /* $bold */
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    background: rgb(255, 91, 37); /* Updated color */
-    color: #ffffff; /* $white */
+    background-color: rgb(213, 163, 93);
+    color: rgb(113, 34, 5);
     border-radius: 15px; /* Rounded borders */
     box-shadow: 
       0 0 0 5px rgb(232, 41, 12), /* First layer */
       0 0 0 10px rgb(113, 34, 5); /* Second layer */
     transition: all 0.5s ease;
     display: block;
-    margin: 20px auto  auto;
+    margin: 20px auto 20px auto;
     text-align: center; 
 }
+
 .button:hover,
 .button:focus {
-    background: rgb(229, 103, 23); 
+  background-color: rgb(229, 103, 23);
+    color: black
 }
 
 .button-block {

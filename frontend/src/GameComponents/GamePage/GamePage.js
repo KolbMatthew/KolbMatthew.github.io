@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import "./GamePage.css";
 
 function GamePage() {
-  const [showOutput, setOutput] = useState("Select an answer to get started!");
   const [questions, setQuestions] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -79,12 +78,10 @@ function GamePage() {
   // Handle option click
   const handleOptionClick = (value) => {
     if (value === activeQuestion.correctAnswer) {
-      setOutput("Correct!");
       setScore(score + 10);
       setIsCorrect(true);
       nextQuestion();
     } else {
-      setOutput("Incorrect!");
       setIsCorrect(false);
       setScore(score - 10);
     }
@@ -161,12 +158,12 @@ function GamePage() {
   if (showDifficultySelection) {
     return (
       <div>
-        <h3>Select Difficulty:</h3>
-        <div>
-          <button onClick={() => handleDifficultyChange(1)}>Easy</button>
-          <button onClick={() => handleDifficultyChange(2)}>Medium</button>
-          <button onClick={() => handleDifficultyChange(3)}>Hard</button>
-          <button onClick={() => handleDifficultyChange(4)}>Extreme</button>
+        <h2>Select Difficulty:</h2>
+        <div className="difficulty-buttons-container">
+          <button className="button" onClick={() => handleDifficultyChange(1)}>Easy</button>
+          <button className="button" onClick={() => handleDifficultyChange(2)}>Medium</button>
+          <button className="button" onClick={() => handleDifficultyChange(3)}>Hard</button>
+          <button className="button" onClick={() => handleDifficultyChange(4)}>Extreme</button>
         </div>
       </div>
     );
@@ -177,31 +174,31 @@ function GamePage() {
     return (
       <div>
         <h2>Your score: {score}</h2>
-        <button onClick={handleContinue}>Continue</button>
+        <button className="button" onClick={handleContinue}>Continue</button>
         <div>
-          <h3>Change Difficulty:</h3>
-          <div>
+          <h2>Change Difficulty:</h2>
+          <div className="difficulty-buttons-container">
             <button
               onClick={() => handleDifficultyChange(1)}
-              className={difficulty === 1 ? "highlighted" : ""}
+              className={`button ${difficulty === 1 ? "highlighted" : ""}`}
             >
               Easy
             </button>
             <button
               onClick={() => handleDifficultyChange(2)}
-              className={difficulty === 2 ? "highlighted" : ""}
+              className={`button ${difficulty === 2 ? "highlighted" : ""}`}
             >
               Medium
             </button>
             <button
               onClick={() => handleDifficultyChange(3)}
-              className={difficulty === 3 ? "highlighted" : ""}
+              className={`button ${difficulty === 3 ? "highlighted" : ""}`}
             >
               Hard
             </button>
             <button
               onClick={() => handleDifficultyChange(4)}
-              className={difficulty === 4 ? "highlighted" : ""}
+              className={`button ${difficulty === 4 ? "highlighted" : ""}`}
             >
               Extreme
             </button>
@@ -230,23 +227,14 @@ function GamePage() {
         timeLeft={timeLeft}
       />
 
-  <div className="question-container">
-        <h2 id="result-output" data-testid="result-output">
-          {showOutput}
-        </h2>
+      <div className="question-container">
         <div>
-          <h2 id="result-output" data-testid="result-output">
-            Score: {score}
-          </h2>
         </div>
-      </div>
-      <div>
-        <h2>Time Left: {formatTime(timeLeft)} seconds</h2>
       </div>
       {/* Debug buttons */}
       <div>
-        <button onClick={handleDebugCorrect}>Get Correct Answer</button>
-        <button onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
+        <button className="button" onClick={handleDebugCorrect}>Get Correct Answer</button>
+        <button className="button" onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
       </div>
     </div>
   );

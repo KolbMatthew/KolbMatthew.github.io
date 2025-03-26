@@ -524,11 +524,11 @@ function GameCanvas({
         height={450 * scaleFactor}
         style={{ backgroundColor: "black" }}
       />
-      <div className="options-container">
+      <div className="game-canvas-option-container">
         {options.map((option, index) => (
           <button
             key={index}
-            className="option-button"
+            className="game-canvas-option-button"
             onClick={() => handleOptionClick(option)}
           >
             {option}

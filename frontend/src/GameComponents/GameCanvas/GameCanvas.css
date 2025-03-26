@@ -9,19 +9,20 @@
   box-shadow: 
     0 0 0 10px rgb(232, 41, 12), /* First layer */
     0 0 0 20px rgb(113, 34, 5); /* Second layer */
-  margin-top: 150px; /* Add some white space above the canvas */
+  margin-top: 30px; /* Add some white space above the canvas */
 }
 
-.options-container {
-  font-family: 'Courier New', Courier, monospace;
+.game-canvas-option-container {
   position: absolute;
   bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
-  gap: 40px; 
+  gap: 10px; /* Adjust the gap between buttons as needed */
 }
 
-.option-button {
+.game-canvas-option-button {
   padding: 5px 10px;
   font-size: 30px;
   font-family: 'Courier New', Courier, monospace;
@@ -29,14 +30,15 @@
   background-color: rgb(213, 163, 93);
   color: rgb(113, 34, 5);
   border: 5px solid rgb(255, 91, 37); 
-  border-radius: 1px; 
+  border-radius: 8px; 
   box-shadow: 
     0 0 0 5px rgb(232, 41, 12), 
     0 0 0 10px rgb(113, 34, 5); 
   cursor: pointer;
+  margin: 15px;
 }
 
-.option-button:hover {
+.game-canvas-option-button:hover {
   background-color: rgb(229, 103, 23);
 }
 
