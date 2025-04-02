@@ -15,6 +15,7 @@ function GamePage() {
   const [showWinMessage, setShowWinMessage] = useState(false); 
   const [isCorrect, setIsCorrect] = useState(null);
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
+  const [userID, setUserID] = useState(1); // Example user ID. need to figure out how to dynamically set userID -Kyle
 
   // Fetch questions from backend
   useEffect(() => {
@@ -154,6 +155,38 @@ function GamePage() {
     const incorrectOption = options.find(option => option !== activeQuestion.correctAnswer);
     handleOptionClick(incorrectOption);
   };
+
+  // saveScore function
+  const saveScore = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/scores/save-score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          score: score,
+          userID: userID,
+          gameDate: new Date().toISOString(), // Current date and time in ISO format
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Score saved successfully!');
+      } else {
+        console.error('Failed to save score:');
+      }
+    } catch (error) {
+      console.error('Error while saving score:', error);
+    }
+  };
+
+  // Call saveScore when gameOver is true
+  useEffect(() => {
+    if (gameOver) {
+      saveScore();
+    }
+  }, [gameOver]);
 
   if (showDifficultySelection) {
     return (
