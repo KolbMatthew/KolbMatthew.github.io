@@ -4,34 +4,37 @@ import { useState, useEffect } from "react";
 import "./GamePage.css";
 
 function GamePage() {
-  const [showOutput, setOutput] = useState("Select an answer to get started!");
   const [questions, setQuestions] = useState([]);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [questionsInSet, setQuestionsInSet] = useState(5);
+  const [questionsInSet] = useState(10);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState(1);
   const [showDifficultySelection, setShowDifficultySelection] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(60000); 
+  const [timeLeft, setTimeLeft] = useState(60000);
+  const [showWinMessage, setShowWinMessage] = useState(false); 
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
   // Fetch questions from backend
   useEffect(() => {
-    if (!showDifficultySelection) {
-      fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
+    console.log(`Fetching ${questionsInSet} questions with difficulty ${difficulty}`);
+    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched questions:", data);
+        setQuestions(data);
+        setActiveQuestionIndex(0); // Reset active question index
       })
-        .then((response) => response.json())
-        .then((data) => {
-          setQuestions(data);
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    }
-  }, [difficulty, showDifficultySelection]);
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [difficulty, questionsInSet]);
 
   // Timer effect
   useEffect(() => {
@@ -52,7 +55,13 @@ function GamePage() {
     if (activeQuestionIndex < questions.length - 1) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
     } else {
-      setGameOver(true);
+      // Calculate additional points based on remaining time
+      const additionalPoints = Math.floor(timeLeft / 1000); // 1 point per second left
+      setScore((prevScore) => prevScore + additionalPoints);
+      setShowWinMessage(true); // Show win message
+      setTimeout(() => {
+        setGameOver(true);
+      }, 3000); // 3-second delay before setting game over
     }
   };
 
@@ -69,12 +78,13 @@ function GamePage() {
   // Handle option click
   const handleOptionClick = (value) => {
     if (value === activeQuestion.correctAnswer) {
-      setOutput("Correct!");
       setScore(score + 10);
+      setIsCorrect(true);
+      nextQuestion();
     } else {
-      setOutput("Incorrect!");
+      setIsCorrect(false);
+      setScore(score - 10);
     }
-    nextQuestion();
   };
 
   // Handle continue button and difficulty selection
@@ -82,8 +92,9 @@ function GamePage() {
     setActiveQuestionIndex(0);
     setScore(0);
     setGameOver(false);
-    setTimeLeft(60000); 
-    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}`, {
+    setShowWinMessage(false); // Reset win message
+    setTimeLeft(60000);
+    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -92,6 +103,7 @@ function GamePage() {
       .then((response) => response.json())
       .then((data) => {
         setQuestions(data);
+        setActiveQuestionIndex(0); // Reset active question index
       })
       .catch((err) => {
         console.log(err.message);
@@ -101,24 +113,57 @@ function GamePage() {
   // Handle Difficulty selection
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
+    setActiveQuestionIndex(0); // Reset active question index
     setShowDifficultySelection(false);
   };
 
   const formatTime = (time) => {
     const seconds = Math.floor(time / 1000);
-    const milliseconds = Math.floor((time % 1000) / 10); 
+    const milliseconds = Math.floor((time % 1000) / 10);
     return `${seconds}.${milliseconds.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
+    if (isCorrect === null) return;
+
+    if (isCorrect) {
+      // Increase speed
+      setSpeedMultiplier((prev) => {
+        const newMultiplier = prev + 0.25;
+        console.log(`Speed multiplier increased to ${newMultiplier} (correct).`);
+        return newMultiplier;
+      });
+    } else {
+      // Decrease speed
+      setSpeedMultiplier((prev) => {
+        const newMultiplier = Math.max(0.5, prev - 1);
+        console.log(`Speed multiplier decreased to ${newMultiplier} (incorrect).`);
+        return newMultiplier;
+      });
+    }
+    setIsCorrect(null);
+  }, [isCorrect]);
+
+
+  // Debug functions
+  const handleDebugCorrect = () => {
+    handleOptionClick(activeQuestion.correctAnswer);
+  };
+
+  const handleDebugIncorrect = () => {
+    const incorrectOption = options.find(option => option !== activeQuestion.correctAnswer);
+    handleOptionClick(incorrectOption);
   };
 
   if (showDifficultySelection) {
     return (
       <div>
-        <h3>Select Difficulty:</h3>
-        <div>
-          <button onClick={() => handleDifficultyChange(1)}>Easy</button>
-          <button onClick={() => handleDifficultyChange(2)}>Medium</button>
-          <button onClick={() => handleDifficultyChange(3)}>Hard</button>
-          <button onClick={() => handleDifficultyChange(4)}>Extreme</button>
+        <h2>Select Difficulty:</h2>
+        <div className="difficulty-buttons-container">
+          <button className="button" onClick={() => handleDifficultyChange(1)}>Easy</button>
+          <button className="button" onClick={() => handleDifficultyChange(2)}>Medium</button>
+          <button className="button" onClick={() => handleDifficultyChange(3)}>Hard</button>
+          <button className="button" onClick={() => handleDifficultyChange(4)}>Extreme</button>
         </div>
       </div>
     );
@@ -129,31 +174,31 @@ function GamePage() {
     return (
       <div>
         <h2>Your score: {score}</h2>
-        <button onClick={handleContinue}>Continue</button>
+        <button className="button" onClick={handleContinue}>Continue</button>
         <div>
-          <h3>Change Difficulty:</h3>
-          <div>
+          <h2>Change Difficulty:</h2>
+          <div className="difficulty-buttons-container">
             <button
               onClick={() => handleDifficultyChange(1)}
-              className={difficulty === 1 ? "highlighted" : ""}
+              className={`button ${difficulty === 1 ? "highlighted" : ""}`}
             >
               Easy
             </button>
             <button
               onClick={() => handleDifficultyChange(2)}
-              className={difficulty === 2 ? "highlighted" : ""}
+              className={`button ${difficulty === 2 ? "highlighted" : ""}`}
             >
               Medium
             </button>
             <button
               onClick={() => handleDifficultyChange(3)}
-              className={difficulty === 3 ? "highlighted" : ""}
+              className={`button ${difficulty === 3 ? "highlighted" : ""}`}
             >
               Hard
             </button>
             <button
               onClick={() => handleDifficultyChange(4)}
-              className={difficulty === 4 ? "highlighted" : ""}
+              className={`button ${difficulty === 4 ? "highlighted" : ""}`}
             >
               Extreme
             </button>
@@ -163,41 +208,36 @@ function GamePage() {
     );
   }
 
+  // Check if questions are loaded before rendering GameCanvas
+  if (questions.length === 0) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <>
-      <div>
-        <GameCanvas />
-      </div>
+    <div className="prompt-output">
+      <GameCanvas
+        activeQuestionIndex={activeQuestionIndex}
+        questionsInSet={questionsInSet}
+        showWinMessage={showWinMessage}
+        isCorrect={isCorrect}
+        prompt={prompt}
+        options={options}
+        handleOptionClick={handleOptionClick}
+        speedMultiplier={speedMultiplier}
+        timeLeft={timeLeft}
+      />
 
-      <h2 id="result-output" data-testid="result-output">
-        {showOutput}
-      </h2>
-
-      <div>
-        <h2 id="prompt-output" data-testid="prompt-output">
-          {prompt}
-        </h2>
-        <div id="option-container">
-          {options.map((option, index) => (
-            <Option
-              key={index}
-              text={option}
-              onClick={() => handleOptionClick(option)}
-            />
-          ))}
+      <div className="question-container">
+        <div>
         </div>
       </div>
-
+      {/* Debug buttons */}
       <div>
-        <h2>Score: {score}</h2>
+        <button className="button" onClick={handleDebugCorrect}>Get Correct Answer</button>
+        <button className="button" onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
       </div>
-
-      <div>
-        <h2>Time Left: {formatTime(timeLeft)} seconds</h2>
-      </div>
-    </>
+    </div>
   );
 }
 
 export default GamePage;
-//test
