@@ -7,7 +7,9 @@ import cloudImageASrc from "../../site-images/Game/clouds-A.png";
 import cloudImageBSrc from "../../site-images/Game/clouds-B.png";
 import groundImageSrc from "../../site-images/Game/ground.png";
 import mountainImageSrc from "../../site-images/Game/mountains.png";
-import treeLayerImageSrc from "../../site-images/Game/tree-layer.png"; // Import the new tree layer image
+import treeLayerFrontImageSrc from "../../site-images/Game/tree-layer-front.png";
+import treeLayerBehindImageSrc from "../../site-images/Game/tree-layer-behind.png"; 
+import treeLayerBackgroundImageSrc from "../../site-images/Game/tree-layer-background.png";
 import "./GameCanvas.css";
 
 const scaleFactor = 1.5;
@@ -53,28 +55,18 @@ function GameCanvas({
   const mountainImage1 = useRef(new Image());
   const mountainImage2 = useRef(new Image());
   const mountainImage3 = useRef(new Image());
-  const treeLayerImage = useRef(new Image()); 
+  const treeLayerFrontImage = useRef(new Image()); 
+  const treeLayerBehindImage = useRef(new Image()); 
+  const treeLayerBackgroundImage = useRef(new Image()); 
   const treesAreReady = useRef(false);
 
   // Positions for elements
   const racecarPositionX = useRef(0);
   const targetPositionX = useRef(0);
 
-  const sunPositionX = useRef(0);
-  const sunsetPositionX = useRef(0);
-  const cloudPositionX = useRef(0);
-  const cloudPositionX2 = useRef(0);
-  const cloudPositionX3 = useRef(0);
-  const groundPositionX = useRef(0);
-  const roadPositionX = useRef(0);
-  const mountainPosition1X = useRef(0);
-  const mountainPosition2X = useRef(0);
-  const mountainPosition3X = useRef(0);
-  const treeLayerPositionX = useRef(0); 
-
   const layers = useRef([
     {
-      image: treeLayerImage.current,
+      image: treeLayerFrontImage.current,
       positionRef: useRef(0),
       speed: baseSpeeds.treeSpeed,
       y: 50,
@@ -84,9 +76,6 @@ function GameCanvas({
     },
     // Add more layers dynamically if needed
   ]);
-
-  // Pre-create refs for new layers
-  const treeLayerRefs = useRef([]); // Array to store refs for dynamically added tree layers
 
   // Load image resources
   const loadImages = useCallback(() => {
@@ -101,17 +90,19 @@ function GameCanvas({
     mountainImage1.current.src = mountainImageSrc;
     mountainImage2.current.src = mountainImageSrc;
     mountainImage3.current.src = mountainImageSrc;
-    treeLayerImage.current.src = treeLayerImageSrc; 
+    treeLayerFrontImage.current.src = treeLayerFrontImageSrc; 
+    treeLayerBehindImage.current.src = treeLayerBehindImageSrc; 
+    treeLayerBackgroundImage.current.src = treeLayerBackgroundImageSrc; 
   }, []);
 
   // Track when tree layer image has loaded.
   useEffect(() => {
-    treeLayerImage.current.onload = () => {
+    treeLayerFrontImage.current.onload = () => {
       treesAreReady.current = true;
     };
 
     return () => {
-      treeLayerImage.current.onload = null;
+      treeLayerFrontImage.current.onload = null;
     };
   }, []);
 
@@ -261,8 +252,8 @@ function GameCanvas({
       ctx.scale(scaleFactor, scaleFactor);
 
       // Draw all layers
-      const backgroundLayers = layers.current.filter(layer => layer.y !== 150);
-      const foregroundLayers = layers.current.filter(layer => layer.y === 150);
+      const backgroundLayers = layers.current.filter(layer => layer.y !== 140);
+      const foregroundLayers = layers.current.filter(layer => layer.y === 140);
 
       backgroundLayers.forEach((layer) => drawScrollingLayer(ctx, layer, deltaTime));
       drawRacecar(ctx);
@@ -353,9 +344,10 @@ function GameCanvas({
     addLayer(mountainImage3, baseSpeeds.mountainSpeed3, 30, 400, 3, 100);
     addLayer(cloudImage2, baseSpeeds.cloudSpeed2, 50, 300, 3);
     addLayer(groundImage, baseSpeeds.groundSpeed, -40, 400, 2);
+    addLayer(treeLayerBackgroundImage, baseSpeeds.treeSpeed * 0.95, 55, 250, 3);
+    addLayer(treeLayerBehindImage, baseSpeeds.treeSpeed, 100, 150, 3); 
     addLayer(roadImage, baseSpeeds.roadSpeed, -65, 400, 2);
-    addLayer(treeLayerImage, baseSpeeds.treeSpeed, 60, 200, 3);
-    addLayer(treeLayerImage, baseSpeeds.treeSpeed, 150, 200, 3);
+    addLayer(treeLayerFrontImage, baseSpeeds.treeSpeed, 140, 200, 3);
   }, []);
 
   return (
