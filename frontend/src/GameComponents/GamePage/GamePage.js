@@ -92,8 +92,9 @@ function GamePage() {
     setActiveQuestionIndex(0);
     setScore(0);
     setGameOver(false);
-    setShowWinMessage(false); // Reset win message
+    setShowWinMessage(false);
     setTimeLeft(60000);
+    setSpeedMultiplier(1); // Reset speed multiplier
     fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
       method: "GET",
       headers: {
@@ -103,7 +104,7 @@ function GamePage() {
       .then((response) => response.json())
       .then((data) => {
         setQuestions(data);
-        setActiveQuestionIndex(0); // Reset active question index
+        setActiveQuestionIndex(0);
       })
       .catch((err) => {
         console.log(err.message);
@@ -129,7 +130,7 @@ function GamePage() {
     if (isCorrect) {
       // Increase speed
       setSpeedMultiplier((prev) => {
-        const newMultiplier = prev + 0.25;
+        const newMultiplier = prev + 0.05;
         console.log(`Speed multiplier increased to ${newMultiplier} (correct).`);
         return newMultiplier;
       });

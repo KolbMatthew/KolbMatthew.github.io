@@ -7,9 +7,7 @@ import cloudImageASrc from "../../site-images/Game/clouds-A.png";
 import cloudImageBSrc from "../../site-images/Game/clouds-B.png";
 import groundImageSrc from "../../site-images/Game/ground.png";
 import mountainImageSrc from "../../site-images/Game/mountains.png";
-import treeImageASrc from "../../site-images/Game/tree-A.png";
-import treeImageBSrc from "../../site-images/Game/tree-B.png";
-import treeImageCSrc from "../../site-images/Game/tree-C.png";
+import treeLayerImageSrc from "../../site-images/Game/tree-layer.png"; // Import the new tree layer image
 import "./GameCanvas.css";
 
 const scaleFactor = 1.5;
@@ -55,11 +53,7 @@ function GameCanvas({
   const mountainImage1 = useRef(new Image());
   const mountainImage2 = useRef(new Image());
   const mountainImage3 = useRef(new Image());
-  const treeImageA = useRef(new Image());
-  const treeImageB = useRef(new Image());
-  const treeImageC = useRef(new Image());
-
-  // Ref to track if tree images are loaded
+  const treeLayerImage = useRef(new Image()); 
   const treesAreReady = useRef(false);
 
   // Positions for elements
@@ -76,9 +70,23 @@ function GameCanvas({
   const mountainPosition1X = useRef(0);
   const mountainPosition2X = useRef(0);
   const mountainPosition3X = useRef(0);
+  const treeLayerPositionX = useRef(0); 
 
-  // Tree state array
-  const treePositions = useRef([]);
+  const layers = useRef([
+    {
+      image: treeLayerImage.current,
+      positionRef: useRef(0),
+      speed: baseSpeeds.treeSpeed,
+      y: 50,
+      renderedHeight: 200,
+      loops: 3,
+      offsetX: 0,
+    },
+    // Add more layers dynamically if needed
+  ]);
+
+  // Pre-create refs for new layers
+  const treeLayerRefs = useRef([]); // Array to store refs for dynamically added tree layers
 
   // Load image resources
   const loadImages = useCallback(() => {
@@ -93,30 +101,17 @@ function GameCanvas({
     mountainImage1.current.src = mountainImageSrc;
     mountainImage2.current.src = mountainImageSrc;
     mountainImage3.current.src = mountainImageSrc;
-    treeImageA.current.src = treeImageASrc;
-    treeImageB.current.src = treeImageBSrc;
-    treeImageC.current.src = treeImageCSrc;
+    treeLayerImage.current.src = treeLayerImageSrc; 
   }, []);
 
-  // Track when tree images have loaded.
+  // Track when tree layer image has loaded.
   useEffect(() => {
-    let loadedCount = 0;
-    const handleTreeLoad = () => {
-      loadedCount++;
-      if (loadedCount === 3) {
-        treesAreReady.current = true;
-        treePositions.current = [];
-      }
+    treeLayerImage.current.onload = () => {
+      treesAreReady.current = true;
     };
 
-    treeImageA.current.onload = handleTreeLoad;
-    treeImageB.current.onload = handleTreeLoad;
-    treeImageC.current.onload = handleTreeLoad;
-
     return () => {
-      treeImageA.current.onload = null;
-      treeImageB.current.onload = null;
-      treeImageC.current.onload = null;
+      treeLayerImage.current.onload = null;
     };
   }, []);
 
@@ -138,20 +133,12 @@ function GameCanvas({
   }, [activeQuestionIndex, questionsInSet]);
 
   // Draw a scrolling layer (background, clouds, road, etc.)
-  const drawScrollingLayer = (
-    ctx,
-    image,
-    positionRef,
-    speed,
-    y,
-    renderedHeight,
-    loops,
-    deltaTime,
-    offsetX = 0
-  ) => {
+  const drawScrollingLayer = (ctx, layer, deltaTime) => {
+    const { image, positionRef, speed, y, renderedHeight, loops, offsetX } = layer;
     const naturalAspect = image.naturalWidth / image.naturalHeight;
     const renderedWidth = renderedHeight * naturalAspect;
     const posX = positionRef.current;
+  
     for (let i = 0; i < loops; i++) {
       ctx.drawImage(
         image,
@@ -161,6 +148,7 @@ function GameCanvas({
         renderedHeight
       );
     }
+  
     positionRef.current -= speed * speedMultiplierRef.current * deltaTime;
     if (positionRef.current <= -renderedWidth) {
       positionRef.current += renderedWidth;
@@ -181,86 +169,6 @@ function GameCanvas({
       finalWidth,
       finalHeight
     );
-  };
-
-  // Pre-render a tree image with brightness filter on an offscreen canvas.
-  const getPreRenderedTreeImage = (tree) => {
-    if (!tree.treeImage.naturalWidth) {
-      return tree.treeImage;
-    }
-    if (tree.renderedImage) return tree.renderedImage;
-    const width = tree.treeImage.naturalWidth * tree.size;
-    const height = tree.treeImage.naturalHeight * tree.size;
-    const offscreenCanvas = document.createElement("canvas");
-    offscreenCanvas.width = width;
-    offscreenCanvas.height = height;
-    const offCtx = offscreenCanvas.getContext("2d");
-    offCtx.filter = `brightness(${tree.brightness})`;
-    offCtx.drawImage(tree.treeImage, 0, 0, width, height);
-    tree.renderedImage = offscreenCanvas;
-    return offscreenCanvas;
-  };
-
-  // Draw an array of trees using pre-rendered images.
-  const drawTreesArray = (ctx, trees) => {
-    trees.forEach((tree) => {
-      const renderedImage = getPreRenderedTreeImage(tree);
-      const tw = tree.treeImage.naturalWidth * tree.size;
-      const th = tree.treeImage.naturalHeight * tree.size;
-      ctx.drawImage(renderedImage, tree.x - tw / 2, tree.y - th, tw, th);
-    });
-  };
-
-  // Spawn trees (only if images are loaded), update their positions, and draw them.
-  const updateAndDrawTrees = (ctx, deltaTime) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    if (treePositions.current.length === 0 && treesAreReady.current) {
-      const spacing = 40;
-      const count = Math.floor(canvas.width / spacing);
-      for (let i = 0; i < count; i++) {
-        const x = canvas.width + i * spacing;
-        const isTop = Math.random() < 0.5;
-        const [minY, maxY] = isTop ? [260, 260] : [350, 350];
-        const y = Math.random() * (maxY - minY) + minY;
-        const size = Math.random() * (0.18 - 0.09) + 0.09;
-        const treeImage = [
-          treeImageA.current,
-          treeImageB.current,
-          treeImageC.current,
-        ][Math.floor(Math.random() * 3)];
-        const brightness = Math.random() * 0.4 + 0.8;
-        treePositions.current.push({ x, y, size, treeImage, brightness, isTop });
-      }
-    }
-
-    treePositions.current.forEach((tree) => {
-      const width = tree.treeImage.naturalWidth * tree.size;
-      tree.x -= baseSpeeds.treeSpeed * speedMultiplierRef.current * deltaTime;
-      if (tree.x + width < 0) {
-        tree.x = canvas.width + Math.random() * 100;
-        const isTop = Math.random() < 0.5;
-        const [minY, maxY] = isTop ? [260, 260] : [350, 350];
-        tree.y = Math.random() * (maxY - minY) + minY;
-        tree.size = Math.random() * (0.18 - 0.09) + 0.09;
-        tree.treeImage = [
-          treeImageA.current,
-          treeImageB.current,
-          treeImageC.current,
-        ][Math.floor(Math.random() * 3)];
-        tree.brightness = Math.random() * 0.4 + 0.8;
-        tree.isTop = isTop;
-        tree.renderedImage = null;
-      }
-    });
-
-    const treesBehindCar = treePositions.current.filter((t) => t.isTop);
-    const treesInFrontOfCar = treePositions.current.filter((t) => !t.isTop);
-
-    drawTreesArray(ctx, treesBehindCar);
-    drawRacecar(ctx);
-    drawTreesArray(ctx, treesInFrontOfCar);
   };
 
   // Draw the win overlay.
@@ -351,120 +259,26 @@ function GameCanvas({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.save();
       ctx.scale(scaleFactor, scaleFactor);
-      // Draw background layers.
-      drawScrollingLayer(
-        ctx,
-        sunsetImage.current,
-        sunsetPositionX,
-        baseSpeeds.sunsetSpeed,
-        0,
-        300,
-        2,
-        deltaTime
-      );
-      drawScrollingLayer(
-        ctx,
-        sunImage.current,
-        sunPositionX,
-        baseSpeeds.sunSpeed,
-        0,
-        200,
-        2,
-        deltaTime
-      );
-      drawScrollingLayer(
-        ctx,
-        cloudImage.current,
-        cloudPositionX,
-        baseSpeeds.cloudSpeed,
-        15,
-        50,
-        8,
-        deltaTime
-      );
-      drawScrollingLayer(
-        ctx,
-        mountainImage1.current,
-        mountainPosition1X,
-        baseSpeeds.mountainSpeed1,
-        30,
-        600,
-        3,
-        deltaTime
-      );
-      drawScrollingLayer(
-        ctx,
-        mountainImage2.current,
-        mountainPosition2X,
-        baseSpeeds.mountainSpeed2,
-        30,
-        300,
-        3,
-        deltaTime,
-        -100
-      );
-      drawScrollingLayer(
-        ctx,
-        mountainImage3.current,
-        mountainPosition3X,
-        baseSpeeds.mountainSpeed3,
-        30,
-        400,
-        3,
-        deltaTime,
-        100
-      );
-      drawScrollingLayer(
-        ctx,
-        cloudImage2.current,
-        cloudPositionX2,
-        baseSpeeds.cloudSpeed2,
-        50,
-        100,
-        4,
-        deltaTime
-      );
-      drawScrollingLayer(
-        ctx,
-        cloudImage3.current,
-        cloudPositionX3,
-        baseSpeeds.cloudSpeed3,
-        75,
-        200,
-        3,
-        deltaTime
-      );
-      drawScrollingLayer(
-        ctx,
-        groundImage.current,
-        groundPositionX,
-        baseSpeeds.groundSpeed,
-        -40,
-        400,
-        2,
-        deltaTime
-      );
-      drawScrollingLayer(
-        ctx,
-        roadImage.current,
-        roadPositionX,
-        baseSpeeds.roadSpeed,
-        -65,
-        400,
-        2,
-        deltaTime
-      );
-      // Update and draw trees and racecar.
-      updateAndDrawTrees(ctx, deltaTime);
-      // Draw prompt overlay.
+
+      // Draw all layers
+      const backgroundLayers = layers.current.filter(layer => layer.y !== 150);
+      const foregroundLayers = layers.current.filter(layer => layer.y === 150);
+
+      backgroundLayers.forEach((layer) => drawScrollingLayer(ctx, layer, deltaTime));
+      drawRacecar(ctx);
+      foregroundLayers.forEach((layer) => drawScrollingLayer(ctx, layer, deltaTime));
+
+      // Draw prompt overlay
       drawPrompt(ctx);
+
       if (showWinMessage) {
         drawWinMessage(ctx);
       }
-      // --- Draw Stopwatch ---
-      // Position stopwatch in the top-right corner.
+
+      // Draw stopwatch
       const logicalWidth = canvas.width / scaleFactor; // e.g., 600
       drawStopwatch(ctx, logicalWidth - 70, 390, 40, timeLeftRef.current, 60000);
+
       ctx.restore();
     },
     [showWinMessage, prompt, speedMultiplier]
@@ -510,9 +324,39 @@ function GameCanvas({
     if (activeQuestionIndex === 0) {
       racecarPositionX.current = 0;
       targetPositionX.current = 0;
-      treePositions.current = [];
     }
   }, [activeQuestionIndex]);
+
+
+
+  const addLayer = (imageRef, speed, y, renderedHeight, loops, offsetX = 0) => {
+    const newPositionRef = { current: 0 }; // Create a plain object for positionRef
+    layers.current.push({
+      image: imageRef.current,
+      positionRef: newPositionRef,
+      speed,
+      y,
+      renderedHeight,
+      loops,
+      offsetX,
+    });
+  };
+
+  useEffect(() => {
+    // Add layers dynamically
+    // addlayer(image, speed, y, renderedHeight, loops, offsetX)
+    addLayer(sunsetImage, baseSpeeds.sunsetSpeed, 0, 300, 2);
+    addLayer(sunImage, baseSpeeds.sunSpeed, 0, 200, 2);
+    addLayer(cloudImage, baseSpeeds.cloudSpeed, -20, 350, 3);
+    addLayer(mountainImage1, baseSpeeds.mountainSpeed1, 30, 600, 3);
+    addLayer(mountainImage2, baseSpeeds.mountainSpeed2, 30, 300, 3, -100);
+    addLayer(mountainImage3, baseSpeeds.mountainSpeed3, 30, 400, 3, 100);
+    addLayer(cloudImage2, baseSpeeds.cloudSpeed2, 50, 300, 3);
+    addLayer(groundImage, baseSpeeds.groundSpeed, -40, 400, 2);
+    addLayer(roadImage, baseSpeeds.roadSpeed, -65, 400, 2);
+    addLayer(treeLayerImage, baseSpeeds.treeSpeed, 60, 200, 3);
+    addLayer(treeLayerImage, baseSpeeds.treeSpeed, 150, 200, 3);
+  }, []);
 
   return (
     <div className="game-container">
