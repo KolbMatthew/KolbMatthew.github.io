@@ -158,8 +158,8 @@ function Form() {
         password: "",
       });
 
-      // Redirect to game page
-      navigate('/game');
+      // Redirect to landing page
+      navigate("/landing");
     } else {
       setLoginStatus("Invalid email or password.");
     }
