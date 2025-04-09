@@ -64,49 +64,49 @@ public class MathPromptingProgram {
         Random random = new Random();
         int num1 = 0;
         int num2 = 0;
-        int operation;
-        
+        int operation = 0;
+
         if (difficulty == 0){
-            operation = random.nextInt(2);  // Addition or Subtraction
+            operation = random.nextInt(2); 
             if (operation == 0){ // Addition
                 num1 = random.nextInt(12) + 1;
                 num2 = random.nextInt(12) + 1;
-            } else { // Subtraction
+            } else if (operation == 1){ // Subtraction
                 num1 = random.nextInt(12) + 1;
                 num2 = random.nextInt(num1) + 1;
-            }      
-        } else if (difficulty == 1) { // Only Multiplication
-            num1 = random.nextInt(6) + 1;
-            num2 = random.nextInt(6) + 1;
-            operation = 2;  
-        } else if (difficulty == 2) {  // Addition or Subtraction
-            num1 = random.nextInt(24) + 1;
-            num2 = random.nextInt(24) + 1;
-            operation = random.nextInt(2); 
-        } else if (difficulty == 3) { // Multiplication or Division
-            operation = random.nextInt(2) + 2; 
-            if (operation == 2){ // Multiplication
-                num1 = random.nextInt(12) + 1;
-                num2 = random.nextInt(12) + 1;
-            } else { // Division
-                num1 = random.nextInt(12) + 1;
-                num2 = random.nextInt(12) + 1;
+            }
+        } else if (difficulty == 1){
+            operation = random.nextInt(4); 
+            if (operation == 0){ // Addition
+                num1 = random.nextInt(25) + 1;
+                num2 = random.nextInt(25) + 1;
+            } else if (operation == 1){ // Subtraction
+                num1 = random.nextInt(25) + 1;
+                num2 = random.nextInt(25) + 1;
+            } else if (operation == 2){ // Multiplication
+                num1 = random.nextInt(6) + 1;
+                num2 = random.nextInt(6) + 1;
+            } else if (operation == 3){ // Division
+                num1 = random.nextInt(6) + 1;
+                num2 = random.nextInt(6) + 1;
                 num1 = num1 * num2;
-            }    
-        } else { // All operations
-            operation = random.nextInt(4);  // All operations
-            if (operation < 2) {  // Addition or Subtraction
-                num1 = random.nextInt(24) + 1;
-                num2 = random.nextInt(24) + 1;
+            }
+        } else if (difficulty == 2){
+            operation = random.nextInt(4); 
+            if (operation == 0){ // Addition
+                num1 = random.nextInt(50) + 1;
+                num2 = random.nextInt(50) + 1;
+            } else if (operation == 1){ // Subtraction
+                num1 = random.nextInt(50) + 1;
+                num2 = random.nextInt(50) + 1;
             } else if (operation == 2){ // Multiplication
                 num1 = random.nextInt(12) + 1;
                 num2 = random.nextInt(12) + 1;
-            } else { // Division
+            } else if (operation == 3){ // Division
                 num1 = random.nextInt(12) + 1;
                 num2 = random.nextInt(12) + 1;
                 num1 = num1 * num2;
-            }    
-            
+            }
         }
 
         int correctAnswer;
