@@ -82,7 +82,7 @@ public class MathPromptingProgram {
                 num2 = random.nextInt(25) + 1;
             } else if (operation == 1){ // Subtraction
                 num1 = random.nextInt(25) + 1;
-                num2 = random.nextInt(25) + 1;
+                num2 = random.nextInt(num1) + 1;
             } else if (operation == 2){ // Multiplication
                 num1 = random.nextInt(6) + 1;
                 num2 = random.nextInt(6) + 1;
@@ -98,7 +98,7 @@ public class MathPromptingProgram {
                 num2 = random.nextInt(50) + 1;
             } else if (operation == 1){ // Subtraction
                 num1 = random.nextInt(50) + 1;
-                num2 = random.nextInt(50) + 1;
+                num2 = random.nextInt(num1) + 1;
             } else if (operation == 2){ // Multiplication
                 num1 = random.nextInt(12) + 1;
                 num2 = random.nextInt(12) + 1;
