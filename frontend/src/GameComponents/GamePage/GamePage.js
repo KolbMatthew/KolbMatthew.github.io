@@ -1,7 +1,8 @@
 import GameCanvas from "../GameCanvas/GameCanvas";
 import Option from "../Option/Option";
 import { useState, useEffect } from "react";
-import "./GamePage.css";
+import "../../styles/global.css";
+import "../../styles/GamePage.css";
 
 function GamePage() {
   const [questions, setQuestions] = useState([]);

@@ -1,6 +1,7 @@
 import Form from "../Login/Form.js";
-import "../styles/style.css"; // Import the global styles
-import MRLogo from "../site-images/MRLogo.png"; // Import the logo image
+import "../styles/Home.css";
+import "../styles/global.css";
+import MRLogo from "../site-images/MRLogo.png";
 
 function Home() {
   return (

@@ -5,8 +5,8 @@ import {
   Route,
   useNavigate,
 } from "react-router-dom";
-import "./Form.css";
-import "../styles/style.css"; // Import the global styles
+import "../styles/Form.css";
+import "../styles/global.css";
 
 
 function Form() {

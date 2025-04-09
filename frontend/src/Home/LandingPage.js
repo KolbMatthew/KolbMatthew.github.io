@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/style.css"; 
+import "../styles/global.css"; 
+import "../styles/LandingPage.css";
 import MRLogo from "../site-images/MRLogo.png"; 
 
 function LandingPage() {

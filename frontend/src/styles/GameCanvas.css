@@ -41,10 +41,3 @@
 .game-canvas-option-button:hover {
   background-color: rgb(229, 103, 23);
 }
-
-@font-face {
-  font-family: 'Alkaline Regular';
-  src: url("../../site-fonts/AlkalineTest-Regular-BF676e1b6ca889c.otf") format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}

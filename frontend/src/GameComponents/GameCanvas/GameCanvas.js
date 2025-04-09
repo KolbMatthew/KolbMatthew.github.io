@@ -10,7 +10,8 @@ import mountainImageSrc from "../../site-images/Game/mountains.png";
 import treeLayerFrontImageSrc from "../../site-images/Game/tree-layer-front.png";
 import treeLayerBehindImageSrc from "../../site-images/Game/tree-layer-behind.png"; 
 import treeLayerBackgroundImageSrc from "../../site-images/Game/tree-layer-background.png";
-import "./GameCanvas.css";
+import '../../styles/GameCanvas.css'; 
+import '../../styles/global.css'; 
 
 const scaleFactor = 1.5;
 const baseSpeeds = {
