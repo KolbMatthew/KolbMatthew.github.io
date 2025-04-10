@@ -360,6 +360,7 @@ function GameCanvas({
         width={600 * scaleFactor}
         height={450 * scaleFactor}
         style={{ backgroundColor: "black" }}
+        className="game-canvas border-style"
       />
       <div className="game-canvas-option-container">
         {options.map((option, index) => (

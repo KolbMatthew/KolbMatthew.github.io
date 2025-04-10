@@ -234,9 +234,9 @@ function GamePage() {
         </div>
       </div>
       {/* Debug buttons */}
-      <div>
-        <button className="button" onClick={handleDebugCorrect}>Get Correct Answer</button>
-        <button className="button" onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
+      <div className="debug-buttons-container">
+         <button className="button" onClick={handleDebugCorrect}>Get Correct Answer</button>
+         <button className="button" onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
       </div>
     </div>
   );

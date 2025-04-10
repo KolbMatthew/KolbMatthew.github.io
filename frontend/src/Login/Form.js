@@ -1,24 +1,15 @@
 import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/Form.css";
 import "../styles/global.css";
 
-
 function Form() {
   const navigate = useNavigate();
-  
-  //signup form submit
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const { email, username, password, confirmEmail, password2 } = inputValues;
 
-    // Simple validation
     if (email !== confirmEmail) {
       alert("Emails do not match!");
       return;
@@ -41,102 +32,25 @@ function Form() {
       body: urlData,
     });
 
-    let output = document.getElementById("user-exists");
-   
-    if (!output) {
-      output = document.createElement("h2");
-      output.setAttribute("id", "user-exists");
-      output.style.fontSize = "14px"; 
-      output.style.whiteSpace = "nowrap"; 
-      document.getElementById("sign-up").appendChild(output);
-    }
-
     const responseText = await response.text();
-    console.log("Response text:", responseText);
-
     if (response.ok) {
-      try {
-        // Check if the response is JSON
-        if (response.headers.get("Content-Type")?.includes("application/json")) {
-          const jsonResponse = JSON.parse(responseText);
-          output.innerText =
-            jsonResponse.success === 0
-              ? "User already registered with this email."
-              : "Registration Successful";
-
-          if (jsonResponse.success === 1) {
-            setInputValues({
-              username: "",
-              email: "",
-              confirmEmail: "",
-              password: "",
-              password2: "",
-            });
-
-            // Redirect to login tab and show success message
-            setActiveTab("login");
-            setLoginStatus("Registration successful! Please log in to continue.");
-          }
-        } else {
-          // Handle plain text response
-          output.innerText = responseText;
-
-          // Redirect to login tab and show success message
-          setActiveTab("login");
-          setLoginStatus("Registration successful! Please log in to continue.");
-        }
-      } catch (error) {
-        console.error("Failed to parse JSON:", error);
-        alert("An error occurred while processing your request.");
-      }
+      alert("Registration successful!");
+      setInputValues({
+        username: "",
+        email: "",
+        confirmEmail: "",
+        password: "",
+        password2: "",
+      });
+      navigate("/login");
     } else {
-      console.error("POST request failed:", response.status, responseText);
-      alert(`Error: ${response.status} - ${responseText}`);
+      alert(`Error: ${responseText}`);
     }
   };
 
-  const [activeTab, setActiveTab] = useState("signup");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showLoginStatus, setLoginStatus] = useState("");
-  const [inputValues, setInputValues] = useState({
-    username: "",
-    email: "",
-    confirmEmail: "",
-    password: "",
-    password2: "",
-  });
-
-  //to differentiate the signup and login email and password fields
-  const [loginValues, setLoginValues] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setInputValues({ ...inputValues, [name]: value });
-  };
-
-  const handleLoginChange = (e) => {
-    const { name, value } = e.target;
-    setLoginValues({ ...loginValues, [name]: value });
-  };
-
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  //login form submit
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
-
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
+    const { email, password } = inputValues;
 
     const urlData = new URLSearchParams();
     urlData.append("email", email);
@@ -151,36 +65,55 @@ function Form() {
     });
 
     if (response.ok) {
-      const jsonResponse = await response.json();
-      setLoginStatus("Logged in!");
-      setLoginValues({
-        email: "",
-        password: "",
-      });
-
-      // Redirect to landing page
+      alert("Login successful!");
       navigate("/landing");
     } else {
-      setLoginStatus("Invalid email or password.");
+      const responseText = await response.text();
+      alert(`Error: ${responseText}`);
     }
   };
 
+  const [activeTab, setActiveTab] = useState("signup");
+  const [inputValues, setInputValues] = useState({
+    username: "",
+    email: "",
+    confirmEmail: "",
+    password: "",
+    password2: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputValues({ ...inputValues, [name]: value });
+  };
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
   return (
-    <div className="form">
+    <div className="form border-style">
       <ul className="tab-group">
         <li className={`tab ${activeTab === "signup" ? "active" : ""}`}>
-          <a href="#signup" onClick={() => handleTabClick("signup")}>
+          <button
+            className="button"
+            onClick={() => handleTabClick("signup")}
+          >
             Sign Up
-          </a>
+          </button>
         </li>
         <li className={`tab ${activeTab === "login" ? "active" : ""}`}>
-          <a href="#login" onClick={() => handleTabClick("login")}>
+          <button
+            className="button"
+            onClick={() => handleTabClick("login")}
+          >
             Log In
-          </a>
+          </button>
         </li>
       </ul>
 
       <div className="tab-content">
+        {/* Sign Up Tab */}
         <div
           id="signup"
           style={{ display: activeTab === "signup" ? "block" : "none" }}
@@ -235,24 +168,11 @@ function Form() {
             </div>
 
             <div className="field-wrap">
-              <div className="eye-container">
-                <button
-                  type="button"
-                  className="eye"
-                  onClick={togglePasswordVisibility}
-                >
-                  <i
-                    className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"}
-                  ></i>
-                </button>
-              </div>
-
               <label className={inputValues.password ? "active highlight" : ""}>
                 Password<span className="req">*</span>
               </label>
-
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 name="password"
                 id="password"
                 value={inputValues.password}
@@ -269,7 +189,7 @@ function Form() {
                 Confirm Password<span className="req">*</span>
               </label>
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 name="password2"
                 id="password2"
                 value={inputValues.password2}
@@ -280,54 +200,51 @@ function Form() {
             </div>
 
             <button type="submit" className="button button-block">
-              Get Started
+              Sign Up
             </button>
           </form>
         </div>
 
+        {/* Log In Tab */}
         <div
           id="login"
           style={{ display: activeTab === "login" ? "block" : "none" }}
         >
           <h1>Welcome Back!</h1>
-          <form id="login-form" onSubmit={handleLoginSubmit}>
+          <form id="log-in" onSubmit={handleLoginSubmit}>
             <div className="field-wrap">
-              <label className={loginValues.email ? "active highlight" : ""}>
+              <label className={inputValues.email ? "active highlight" : ""}>
                 Email Address<span className="req">*</span>
               </label>
               <input
                 type="email"
                 name="email"
-                id="login-email"
-                value={loginValues.email}
+                id="email"
+                value={inputValues.email}
                 required
                 autoComplete="off"
-                onChange={handleLoginChange}
+                onChange={handleInputChange}
               />
             </div>
 
             <div className="field-wrap">
-              <label className={loginValues.password ? "active highlight" : ""}>
+              <label className={inputValues.password ? "active highlight" : ""}>
                 Password<span className="req">*</span>
               </label>
               <input
                 type="password"
                 name="password"
-                id="login-password"
-                value={loginValues.password}
+                id="password"
+                value={inputValues.password}
                 required
                 autoComplete="off"
-                onChange={handleLoginChange}
+                onChange={handleInputChange}
               />
             </div>
 
-            <h2>{showLoginStatus}</h2>
-
-            <p className="forgot">
-              <a href="#">Forgot Password?</a>
-            </p>
-
-            <button className="button button-block">Log In</button>
+            <button type="submit" className="button button-block">
+              Log In
+            </button>
           </form>
         </div>
       </div>

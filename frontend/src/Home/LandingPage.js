@@ -8,7 +8,7 @@ function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="home-container">
+    <div className="landing-page">
       <div className="logo-container">
         <img src={MRLogo} alt="Mind Racers Logo" className="landing-logo" />
       </div>

@@ -1,12 +1,7 @@
 .form {
-  border: 10px solid rgb(255, 91, 37);
-  border-radius: 15px;
-  box-shadow: 
-      0 0 0 10px rgb(232, 41, 12),
-      0 0 0 20px rgb(113, 34, 5);
+  background: rgb(213, 163, 93);
   min-height: 565px;
   width: 550px;
-  background: rgb(213, 163, 93);
   padding: 10px;
   margin: 10px auto;
 }
@@ -14,6 +9,7 @@
 .field-wrap {
   position: relative;
   margin-bottom: 15px;
+  width: 100%; 
 }
 
 label {
@@ -39,7 +35,53 @@ label.active + input {
   border: none;
 }
 
+input, textarea {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  border: 1px solid rgb(113, 34, 5);
+  padding: 5px;
+  color: rgb(113, 34, 5);
+  background: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  width: 100%; 
+  box-sizing: border-box; 
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: rgb(255, 91, 37);
+}
+
 .forgot {
   margin-top: -20px;
   text-align: right;
+}
+
+.tab-group {
+  list-style: none; 
+  padding: 20px;
+  display: flex; 
+  justify-content: space-between; 
+  
+}
+
+.tab {
+  flex: 1; 
+  text-align: center; 
+}
+
+.tab.active button {
+  background-color: rgb(229, 103, 23); 
+  color: white; 
+  border-color: rgb(255, 91, 37); 
+}
+
+.tab button {
+  font-size: 1.8rem; 
+  padding: 15px 30px; 
+  width: 80%; 
+}
+
+button.button-block {
+  margin-top: 20px; /* Add spacing above the button */
 }
