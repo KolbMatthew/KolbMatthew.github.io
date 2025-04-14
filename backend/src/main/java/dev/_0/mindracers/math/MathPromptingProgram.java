@@ -117,26 +117,29 @@ public class MathPromptingProgram {
         } else if (operation == 2) {
             correctAnswer = num1 * num2;
         } else {
-            // while (num1 % num2 != 0) {
-            //     num1 = random.nextInt(90) + 11; // Avoid easy division
-            //     num2 = random.nextInt(90) + 11; // Avoid easy division
-            // }
             correctAnswer = num1 / num2;
         }
 
-        int wrongAnswer1 = correctAnswer + random.nextInt(10) + 1;
-        int wrongAnswer2 = correctAnswer - (random.nextInt(10) + 1);
-        int wrongAnswer3 = correctAnswer - (random.nextInt(10) + 1);
+        int wrongAnswer1 = 0;
+        int wrongAnswer2 = 0;
+        int wrongAnswer3 = 0;
 
-        while (wrongAnswer1 == correctAnswer || wrongAnswer1 == wrongAnswer2 || wrongAnswer1 == wrongAnswer3) {
-            wrongAnswer1 = correctAnswer + random.nextInt(10) + 1;
-        }
-        while (wrongAnswer2 == correctAnswer || wrongAnswer2 == wrongAnswer1 || wrongAnswer3 == wrongAnswer2) {
-            wrongAnswer2 = correctAnswer - (random.nextInt(10) + 1);
-        }
-        while (wrongAnswer3 == correctAnswer || wrongAnswer2 == wrongAnswer3 || wrongAnswer3 == wrongAnswer1) {
+        do {
+            if (operation != 2){
+                wrongAnswer1 = correctAnswer + random.nextInt(3) - 1;
+            } else {
+                wrongAnswer1 = correctAnswer + (random.nextInt(3) - 1) * num1;
+            }
+        } while (wrongAnswer1 == correctAnswer || wrongAnswer1 == wrongAnswer2 || wrongAnswer1 == wrongAnswer3 || wrongAnswer1 == 0);
+
+        do {
+            wrongAnswer2 = correctAnswer + (random.nextInt(10) + 1);
+        }  while (wrongAnswer2 == correctAnswer || wrongAnswer2 == wrongAnswer1 || wrongAnswer3 == wrongAnswer2 || wrongAnswer2 == 0);
+
+        do {
             wrongAnswer3 = correctAnswer - (random.nextInt(10) + 1);
-        }
+        } while (wrongAnswer3 == correctAnswer || wrongAnswer2 == wrongAnswer3 || wrongAnswer3 == wrongAnswer1 || wrongAnswer3 == 0);
+
 
         int correctPosition = random.nextInt(4);
         int[] options = new int[4];
