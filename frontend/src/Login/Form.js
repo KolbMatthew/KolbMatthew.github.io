@@ -5,8 +5,8 @@ import {
   Route,
   useNavigate,
 } from "react-router-dom";
-import "./Form.css";
-import "../styles/style.css"; // Import the global styles
+import "../styles/Form.css";
+import "../styles/global.css";
 
 
 function Form() {
@@ -21,17 +21,14 @@ function Form() {
     // Simple validation
     if (email !== confirmEmail) {
       alert("Emails do not match!");
-      event.preventDefault();
       return;
     }
     if (password !== password2) {
       alert("Passwords do not match!");
-      event.preventDefault();
       return;
     }
 
     const urlData = new URLSearchParams();
-
     urlData.append("email", email);
     urlData.append("username", username);
     urlData.append("password", password);
@@ -49,6 +46,8 @@ function Form() {
     if (!output) {
       output = document.createElement("h2");
       output.setAttribute("id", "user-exists");
+      output.style.fontSize = "14px"; 
+      output.style.whiteSpace = "nowrap"; 
       document.getElementById("sign-up").appendChild(output);
     }
 
@@ -57,19 +56,34 @@ function Form() {
 
     if (response.ok) {
       try {
-        const jsonResponse = JSON.parse(responseText);
-        output.innerText = jsonResponse.success === 0
-          ? "User already registered with this email."
-          : "Registration Successful";
+        // Check if the response is JSON
+        if (response.headers.get("Content-Type")?.includes("application/json")) {
+          const jsonResponse = JSON.parse(responseText);
+          output.innerText =
+            jsonResponse.success === 0
+              ? "User already registered with this email."
+              : "Registration Successful";
 
-        if (jsonResponse.success === 1) {
-          setInputValues({
-            username: "",
-            email: "",
-            confirmEmail: "",
-            password: "",
-            password2: "",
-          });
+          if (jsonResponse.success === 1) {
+            setInputValues({
+              username: "",
+              email: "",
+              confirmEmail: "",
+              password: "",
+              password2: "",
+            });
+
+            // Redirect to login tab and show success message
+            setActiveTab("login");
+            setLoginStatus("Registration successful! Please log in to continue.");
+          }
+        } else {
+          // Handle plain text response
+          output.innerText = responseText;
+
+          // Redirect to login tab and show success message
+          setActiveTab("login");
+          setLoginStatus("Registration successful! Please log in to continue.");
         }
       } catch (error) {
         console.error("Failed to parse JSON:", error);
@@ -144,8 +158,8 @@ function Form() {
         password: "",
       });
 
-      // Redirect to game page
-      navigate('/game');
+      // Redirect to landing page
+      navigate("/landing");
     } else {
       setLoginStatus("Invalid email or password.");
     }

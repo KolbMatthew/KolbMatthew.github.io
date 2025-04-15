@@ -1,4 +1,5 @@
-import "./Option.css";
+import "../../styles/Option.css";
+import "../../styles/global.css";
 
 function Option({ text, onClick }) {
   return (

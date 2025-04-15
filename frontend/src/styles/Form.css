@@ -148,7 +148,25 @@ textarea {
   margin-bottom: 15px;
 }
 
+.eye-container {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
 
+.eye {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  color: rgb(113, 34, 5); 
+}
+
+input[type="password"] {
+  padding-right: 40px; 
+}
 
 .forgot {
   margin-top: -20px;
