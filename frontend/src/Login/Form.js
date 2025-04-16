@@ -65,6 +65,8 @@ function Form() {
     });
 
     if (response.ok) {
+      const user = await response.json();
+      localStorage.setItem("userID", user.id); // Save userID to local storage
       navigate("/landing");
     } else {
       const responseText = await response.text();

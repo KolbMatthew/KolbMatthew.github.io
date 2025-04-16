@@ -31,7 +31,6 @@ public class GameScoreController {
     @Autowired
     private UserRepository userRepository;
 
-    // TODO setup timed answers
     @PostMapping(path = "/save-score")
     public @ResponseBody ResponseEntity<String> storeNewScore(@RequestParam int score,
             @RequestParam int userID, @RequestParam String gameDate) {
@@ -50,7 +49,7 @@ public class GameScoreController {
 
         Game newGame = new Game();
         newGame.setScore(score);
-        newGame.setUser(userResult);
+        newGame.setUser(userResult); // Associate the score with the user
         newGame.setTime(dateTime);
 
         gameRepository.save(newGame);
@@ -77,6 +76,6 @@ public class GameScoreController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 
-        return ResponseEntity.ok(user.get().getGames());
+        return ResponseEntity.ok(user.get().getGames()); // Fetch scores for the specific user
     }
 }

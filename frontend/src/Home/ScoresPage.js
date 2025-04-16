@@ -6,10 +6,10 @@ function ScoresPage() {
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalScore, setTotalScore] = useState(0);
+  const userID = localStorage.getItem("userID");
 
   useEffect(() => {
-    // Fetch scores from the backend
-    fetch("http://localhost:8080/scores/user/1") // Replace `1` with the dynamic user ID
+    fetch(`http://localhost:8080/scores/user/${userID}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch scores");
@@ -28,7 +28,7 @@ function ScoresPage() {
         console.error("Error fetching scores:", error);
         setLoading(false);
       });
-  }, []);
+  }, [userID]);
 
   if (loading) {
     return <div className="scores-page">Loading...</div>;

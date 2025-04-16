@@ -16,7 +16,7 @@ function GamePage() {
   const [showWinMessage, setShowWinMessage] = useState(false); 
   const [isCorrect, setIsCorrect] = useState(null);
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
-  const [userID, setUserID] = useState(1); // Example user ID. need to figure out how to dynamically set userID -Kyle
+  const userID = localStorage.getItem("userID"); // Example user ID. need to figure out how to dynamically set userID -Kyle
 
   // Fetch questions from backend
   useEffect(() => {
