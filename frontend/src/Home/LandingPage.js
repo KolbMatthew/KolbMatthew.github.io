@@ -16,6 +16,9 @@ function LandingPage() {
         <button className="button" onClick={() => navigate("/game")}>
           Play Game
         </button>
+        <button className="button" onClick={() => navigate("/scores")}>
+          View Scores
+        </button>
         <button className="button" onClick={() => navigate("/profile")}>
           Profile/Settings
         </button>

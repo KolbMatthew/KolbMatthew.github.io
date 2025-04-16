@@ -1,0 +1,53 @@
+.scores-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  .scores-page h1 {
+    font-size: 36px;
+    color: rgb(113, 34, 5);
+    margin-bottom: 20px;
+  }
+  
+  .total-score-container {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: rgb(213, 163, 93);
+    border-radius: 30px;
+  }
+  
+  .total-score-container h2 {
+    font-size: 48px;
+    color: rgb(113, 34, 5);
+    margin: 0;
+  }
+
+  .table-wrapper {
+    overflow: hidden;
+  }
+  
+  .scores-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0px;    
+  }
+  
+  .scores-table th, .scores-table td {
+    border: 1px solid rgb(113, 34, 5);
+    padding: 10px;
+    text-align: center;
+    
+  }
+  
+  .scores-table th {
+    background-color: rgb(213, 163, 93);
+    color: rgb(113, 34, 5);
+  }
+  
+  .scores-table td {
+    background-color: rgb(255, 226, 188);
+  }
