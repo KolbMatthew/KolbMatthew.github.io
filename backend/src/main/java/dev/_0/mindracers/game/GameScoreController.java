@@ -1,6 +1,7 @@
 package dev._0.mindracers.game;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -33,7 +34,11 @@ public class GameScoreController {
     // TODO setup timed answers
     @PostMapping(path = "/save-score")
     public @ResponseBody ResponseEntity<String> storeNewScore(@RequestParam int score,
-            @RequestParam int userID, @RequestParam LocalDateTime gameDate) {
+            @RequestParam int userID, @RequestParam String gameDate) {
+
+        // Define the formatter to make it work with LocalDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime dateTime = LocalDateTime.parse(gameDate, formatter);
 
         Optional<User> user = userRepository.findById(userID);
 
@@ -46,7 +51,7 @@ public class GameScoreController {
         Game newGame = new Game();
         newGame.setScore(score);
         newGame.setUser(userResult);
-        newGame.setTime(gameDate);
+        newGame.setTime(dateTime);
 
         gameRepository.save(newGame);
         return ResponseEntity.ok("Game saved successfully!");
