@@ -160,16 +160,18 @@ function GamePage() {
 
   // saveScore function
   const saveScore = async () => {
+    const gameDate = new Date().toISOString();
+
     try {
       const response = await fetch('http://localhost:8080/scores/save-score', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({
-          score: score,
-          userID: userID,
-          gameDate: new Date().toISOString(), // Current date and time in ISO format
+        body: new URLSearchParams({
+          score: score.toString(), // Convert score to a string
+          userID: userID.toString(), // Convert userID to a string
+          gameDate: gameDate, // Use ISO string format for date
         }),
       });
 
