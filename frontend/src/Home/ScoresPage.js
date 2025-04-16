@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import "../styles/global.css";
 import "../styles/ScoresPage.css";
 
@@ -7,6 +8,7 @@ function ScoresPage() {
   const [loading, setLoading] = useState(true);
   const [totalScore, setTotalScore] = useState(0);
   const userID = localStorage.getItem("userID");
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     fetch(`http://localhost:8080/scores/user/${userID}`)
@@ -62,6 +64,11 @@ function ScoresPage() {
           </table>
         </div>
       )}
+      <div className="bottom-left-container">
+        <button className="button" onClick={() => navigate("/landing")}>
+          Return to Home Page
+        </button>
+      </div>
     </div>
   );
 }

@@ -77,3 +77,10 @@ a:hover {
 *:after {
   box-sizing: border-box;
 }
+
+.bottom-left-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000; 
+}

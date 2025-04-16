@@ -1,6 +1,7 @@
 import GameCanvas from "../GameCanvas/GameCanvas";
 import Option from "../Option/Option";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 import "../../styles/global.css";
 import "../../styles/GamePage.css";
 
@@ -17,6 +18,7 @@ function GamePage() {
   const [isCorrect, setIsCorrect] = useState(null);
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
   const userID = localStorage.getItem("userID"); // Example user ID. need to figure out how to dynamically set userID -Kyle
+  const navigate = useNavigate();
 
   // Fetch questions from backend
   useEffect(() => {
@@ -201,6 +203,11 @@ function GamePage() {
           <button className="button" onClick={() => handleDifficultyChange(2)}>Medium</button>
           <button className="button" onClick={() => handleDifficultyChange(3)}>Hard</button>
         </div>
+        <div className="bottom-left-container">
+          <button className="button" onClick={() => navigate("/landing")}>
+            Return to Home Page
+          </button>
+        </div>
       </div>
     );
   }
@@ -214,7 +221,7 @@ function GamePage() {
         <div>
           <h2>Change Difficulty:</h2>
           <div className="difficulty-buttons-container">
-          <button
+            <button
               onClick={() => handleDifficultyChange(1)}
               className={`button ${difficulty === 1 ? "highlighted" : ""}`}
             >
@@ -233,6 +240,11 @@ function GamePage() {
               Hard
             </button>
           </div>
+        </div>
+        <div className="bottom-left-container">
+          <button className="button" onClick={() => navigate("/landing")}>
+            Return to Home
+          </button>
         </div>
       </div>
     );
@@ -256,15 +268,18 @@ function GamePage() {
         speedMultiplier={speedMultiplier}
         timeLeft={timeLeft}
       />
-
-      <div className="question-container">
-        <div>
-        </div>
-      </div>
-      {/* Debug buttons */}
       <div className="debug-buttons-container">
-         <button className="button" onClick={handleDebugCorrect}>Get Correct Answer</button>
-         <button className="button" onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
+        <button className="button" onClick={handleDebugCorrect}>
+          Get Correct Answer
+        </button>
+        <button className="button" onClick={handleDebugIncorrect}>
+          Get Incorrect Answer
+        </button>
+      </div>
+      <div className="bottom-left-container">
+        <button className="button" onClick={() => navigate("/landing")}>
+          Return to Home
+        </button>
       </div>
     </div>
   );
