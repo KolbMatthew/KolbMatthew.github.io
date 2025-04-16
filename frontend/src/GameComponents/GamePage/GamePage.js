@@ -1,6 +1,7 @@
 import GameCanvas from "../GameCanvas/GameCanvas";
 import Option from "../Option/Option";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 import "../../styles/global.css";
 import "../../styles/GamePage.css";
 
@@ -16,6 +17,8 @@ function GamePage() {
   const [showWinMessage, setShowWinMessage] = useState(false); 
   const [isCorrect, setIsCorrect] = useState(null);
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
+  const userID = localStorage.getItem("userID"); // Example user ID. need to figure out how to dynamically set userID -Kyle
+  const navigate = useNavigate();
 
   // Fetch questions from backend
   useEffect(() => {
@@ -157,6 +160,40 @@ function GamePage() {
     handleOptionClick(incorrectOption);
   };
 
+  // saveScore function
+  const saveScore = async () => {
+    const gameDate = new Date().toISOString();
+
+    try {
+      const response = await fetch('http://localhost:8080/scores/save-score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          score: score.toString(), // Convert score to a string
+          userID: userID.toString(), // Convert userID to a string
+          gameDate: gameDate, // Use ISO string format for date
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Score saved successfully!');
+      } else {
+        console.error('Failed to save score:');
+      }
+    } catch (error) {
+      console.error('Error while saving score:', error);
+    }
+  };
+
+  // Call saveScore when gameOver is true
+  useEffect(() => {
+    if (gameOver) {
+      saveScore();
+    }
+  }, [gameOver]);
+
   if (showDifficultySelection) {
     return (
       <div>
@@ -165,7 +202,11 @@ function GamePage() {
           <button className="button" onClick={() => handleDifficultyChange(1)}>Easy</button>
           <button className="button" onClick={() => handleDifficultyChange(2)}>Medium</button>
           <button className="button" onClick={() => handleDifficultyChange(3)}>Hard</button>
-          <button className="button" onClick={() => handleDifficultyChange(4)}>Extreme</button>
+        </div>
+        <div className="bottom-left-container">
+          <button className="button" onClick={() => navigate("/landing")}>
+            Return to Home Page
+          </button>
         </div>
       </div>
     );
@@ -194,17 +235,16 @@ function GamePage() {
             </button>
             <button
               onClick={() => handleDifficultyChange(3)}
-              className={`button ${difficulty === 3 ? "highlighted" : ""}`}
+              className={`button ${difficulty === 6 ? "highlighted" : ""}`}
             >
               Hard
             </button>
-            <button
-              onClick={() => handleDifficultyChange(4)}
-              className={`button ${difficulty === 4 ? "highlighted" : ""}`}
-            >
-              Extreme
-            </button>
           </div>
+        </div>
+        <div className="bottom-left-container">
+          <button className="button" onClick={() => navigate("/landing")}>
+            Return to Home
+          </button>
         </div>
       </div>
     );
@@ -228,15 +268,18 @@ function GamePage() {
         speedMultiplier={speedMultiplier}
         timeLeft={timeLeft}
       />
-
-      <div className="question-container">
-        <div>
-        </div>
+      <div className="debug-buttons-container">
+        <button className="button" onClick={handleDebugCorrect}>
+          Get Correct Answer
+        </button>
+        <button className="button" onClick={handleDebugIncorrect}>
+          Get Incorrect Answer
+        </button>
       </div>
-      {/* Debug buttons */}
-      <div>
-        <button className="button" onClick={handleDebugCorrect}>Get Correct Answer</button>
-        <button className="button" onClick={handleDebugIncorrect}>Get Incorrect Answer</button>
+      <div className="bottom-left-container">
+        <button className="button" onClick={() => navigate("/landing")}>
+          Return to Home
+        </button>
       </div>
     </div>
   );

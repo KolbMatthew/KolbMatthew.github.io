@@ -48,37 +48,65 @@ public class MathPromptingProgram {
     // Method for Difficulty Selection
     public static int selectDifficulty(Scanner scanner) {
         System.out.println("Select difficulty:");
-        System.out.println("1. Easy (Addition)");
-        System.out.println("2. Medium (Addition and Subtraction)");
-        System.out.println("3. Hard (Addition, Subtraction, Multiplication)");
-        System.out.println("4. Extreme (Multiplication, and Division)");
+        System.out.println("1. Easy Addition and Subtraction");
+        System.out.println("2. Easy Multiplication");
+        System.out.println("3. Hard Addition and Subtraction");
+        System.out.println("4. Hard Multiplication and Division)");
         System.out.print("Your choice: ");
         return scanner.nextInt();
     }
 
     // Method to generate a random math problem based on difficulty
     public static MathProblem generateProblem(int difficulty) {
-        Random random = new Random();
-        int num1 = random.nextInt(100) + 1;
-        int num2 = random.nextInt(100) + 1;
-        int operation;
 
-        if (difficulty == 1) {
-            num1 = random.nextInt(100) + 1;
-            num2 = random.nextInt(100) + 1;
-            operation = 0;  // Only Addition
-        } else if (difficulty == 2) {
-            num1 = random.nextInt(100) + 1;
-            num2 = random.nextInt(100) + 1;
-            operation = random.nextInt(2);  // Addition or Subtraction
-        } else if (difficulty == 3) {
-            num1 = random.nextInt(90) + 11; // Avoid numbers 1-10
-            num2 = random.nextInt(90) + 11; // Avoid numbers 1-10
-            operation = random.nextInt(3);   // Addition, Subtraction, or Multiplication
-        } else {
-            num1 = random.nextInt(90) + 11; // Avoid numbers 1-10
-            num2 = random.nextInt(90) + 11; // Avoid numbers 1-10
-            operation = random.nextInt(2) + 2;  // Multiplication or Division
+        difficulty --; // TEMPORARY FIX UNTIL DIFF SELECTION IS FIXED
+
+        Random random = new Random();
+        int num1 = 0;
+        int num2 = 0;
+        int operation = 0;
+
+        if (difficulty == 0){
+            operation = random.nextInt(2); 
+            if (operation == 0){ // Addition
+                num1 = random.nextInt(12) + 1;
+                num2 = random.nextInt(12) + 1;
+            } else if (operation == 1){ // Subtraction
+                num1 = random.nextInt(12) + 1;
+                num2 = random.nextInt(num1) + 1;
+            }
+        } else if (difficulty == 1){
+            operation = random.nextInt(4); 
+            if (operation == 0){ // Addition
+                num1 = random.nextInt(25) + 1;
+                num2 = random.nextInt(25) + 1;
+            } else if (operation == 1){ // Subtraction
+                num1 = random.nextInt(25) + 1;
+                num2 = random.nextInt(num1) + 1;
+            } else if (operation == 2){ // Multiplication
+                num1 = random.nextInt(6) + 1;
+                num2 = random.nextInt(6) + 1;
+            } else if (operation == 3){ // Division
+                num1 = random.nextInt(6) + 1;
+                num2 = random.nextInt(6) + 1;
+                num1 = num1 * num2;
+            }
+        } else if (difficulty == 2){
+            operation = random.nextInt(4); 
+            if (operation == 0){ // Addition
+                num1 = random.nextInt(50) + 1;
+                num2 = random.nextInt(50) + 1;
+            } else if (operation == 1){ // Subtraction
+                num1 = random.nextInt(50) + 1;
+                num2 = random.nextInt(num1) + 1;
+            } else if (operation == 2){ // Multiplication
+                num1 = random.nextInt(12) + 1;
+                num2 = random.nextInt(12) + 1;
+            } else if (operation == 3){ // Division
+                num1 = random.nextInt(12) + 1;
+                num2 = random.nextInt(12) + 1;
+                num1 = num1 * num2;
+            }
         }
 
         int correctAnswer;
@@ -89,26 +117,29 @@ public class MathPromptingProgram {
         } else if (operation == 2) {
             correctAnswer = num1 * num2;
         } else {
-            while (num1 % num2 != 0) {
-                num1 = random.nextInt(90) + 11; // Avoid easy division
-                num2 = random.nextInt(90) + 11; // Avoid easy division
-            }
             correctAnswer = num1 / num2;
         }
 
-        int wrongAnswer1 = correctAnswer + random.nextInt(10) + 1;
-        int wrongAnswer2 = correctAnswer - (random.nextInt(10) + 1);
-        int wrongAnswer3 = correctAnswer - (random.nextInt(10) + 1);
+        int wrongAnswer1 = 0;
+        int wrongAnswer2 = 0;
+        int wrongAnswer3 = 0;
 
-        while (wrongAnswer1 == correctAnswer || wrongAnswer1 == wrongAnswer2 || wrongAnswer1 == wrongAnswer3) {
-            wrongAnswer1 = correctAnswer + random.nextInt(10) + 1;
-        }
-        while (wrongAnswer2 == correctAnswer || wrongAnswer2 == wrongAnswer1 || wrongAnswer3 == wrongAnswer2) {
-            wrongAnswer2 = correctAnswer - (random.nextInt(10) + 1);
-        }
-        while (wrongAnswer3 == correctAnswer || wrongAnswer2 == wrongAnswer3 || wrongAnswer3 == wrongAnswer1) {
+        do {
+            if (operation != 2){
+                wrongAnswer1 = correctAnswer + random.nextInt(3) - 1;
+            } else {
+                wrongAnswer1 = correctAnswer + (random.nextInt(3) - 1) * num1;
+            }
+        } while (wrongAnswer1 == correctAnswer || wrongAnswer1 == wrongAnswer2 || wrongAnswer1 == wrongAnswer3 || wrongAnswer1 == 0);
+
+        do {
+            wrongAnswer2 = correctAnswer + (random.nextInt(10) + 1);
+        }  while (wrongAnswer2 == correctAnswer || wrongAnswer2 == wrongAnswer1 || wrongAnswer3 == wrongAnswer2 || wrongAnswer2 == 0);
+
+        do {
             wrongAnswer3 = correctAnswer - (random.nextInt(10) + 1);
-        }
+        } while (wrongAnswer3 == correctAnswer || wrongAnswer2 == wrongAnswer3 || wrongAnswer3 == wrongAnswer1 || wrongAnswer3 == 0);
+
 
         int correctPosition = random.nextInt(4);
         int[] options = new int[4];

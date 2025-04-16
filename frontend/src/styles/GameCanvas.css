@@ -3,13 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'Courier New', Courier, monospace;
-  border: 10px solid rgb(255, 91, 37); /* Base border color */
-  border-radius: 15px; /* Rounded borders */
-  box-shadow: 
-    0 0 0 10px rgb(232, 41, 12), /* First layer */
-    0 0 0 20px rgb(113, 34, 5); /* Second layer */
-  margin-top: 30px; /* Add some white space above the canvas */
+  margin-top: 30px;
 }
 
 .game-canvas-option-container {
@@ -19,25 +13,20 @@
   transform: translateX(-50%);
   display: flex;
   justify-content: center;
-  gap: 10px; /* Adjust the gap between buttons as needed */
+  gap: 10px;
 }
 
 .game-canvas-option-button {
   padding: 5px 10px;
   font-size: 30px;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: bold; 
-  background-color: rgb(213, 163, 93);
-  color: rgb(113, 34, 5);
-  border: 5px solid rgb(255, 91, 37); 
-  border-radius: 8px; 
-  box-shadow: 
-    0 0 0 5px rgb(232, 41, 12), 
-    0 0 0 10px rgb(113, 34, 5); 
-  cursor: pointer;
+  font-weight: bold;
   margin: 15px;
 }
 
-.game-canvas-option-button:hover {
-  background-color: rgb(229, 103, 23);
+.game-canvas {
+  border: 10px solid rgb(255, 91, 37);
+  border-radius: 15px;
+  box-shadow: 
+      0 0 0 10px rgb(232, 41, 12),
+      0 0 0 20px rgb(113, 34, 5);
 }

@@ -1,267 +1,86 @@
 @font-face {
-    font-family: 'Alkaline Regular';
-    src: url("../site-fonts/AlkalineTest-Regular-BF676e1b6ca889c.otf") format('opentype');
-    font-weight: normal;
-    font-style: normal;
-  }
-  
-  body {
-    background: rgb(255, 226, 188); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    font-family: 'Courier New', monospace; /* Apply Courier New to all text */
-  }
-  
-  .home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .title {
-    font-family: 'Alkaline Regular', sans-serif;
-    font-size: 50px;
-    color: rgb(113, 34, 5);
-    margin: 20px 0 0 0; 
-    padding: 0px 0; 
-    text-align: center; 
-    width: 100%; 
-  }
-  
-  .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%; 
-  }
-  
-  .form {
-    border: 10px solid rgb(255, 91, 37); 
-    border-radius: 15px; 
-    box-shadow: 
-      0 0 0 10px rgb(232, 41, 12), 
-      0 0 0 20px rgb(113, 34, 5); 
-    min-height: 565px;
-    width: 550px;
-    background: rgb(213, 163, 93); 
-    padding: 5px;
-    margin: 10px auto;
-  }
-  
-  .tab-group {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 40px 0;
-  }
-  
-  .tab-group:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
-  
-  .tab-group li a {
-      display: block;
-      text-decoration: none;
-      padding: 4px;
-      background: rgba(160, 179, 176, 0.25); 
-      color: rgb(113, 34, 5); 
-      font-size: 30px;
-      float: left;
-      width: 45%; 
-      text-align: center;
-      cursor: pointer;
-      transition: 0.5s ease;
-      border: 5px solid rgb(255, 91, 37); 
-      border-radius: 2px; 
-      box-shadow: 
-          0 0 0 5px rgb(232, 41, 12), 
-          0 0 0 10px rgb(113, 34, 5); 
-      border-radius: 15px; 
-      margin: 10px 2.5% 0 2.5%;
-  }
-  
-  .tab-group li a:hover {
-    background: rgb(229, 103, 23); 
-    color: #ffffff; 
-  }
-  
-  .tab-group .active a {
-    background: rgb(213, 163, 93); 
-    color: #ffffff; 
-  }
-  
-  .tab-content > div:last-child {
-    display: none;
-  }
-  
-  h1 {
-    text-align: center;
-    color: rgb(113, 34, 5); 
-    font-weight: 300; 
-    margin: 0 0 40px;
-    font-family: 'Alkaline Regular', sans-serif; /* Override for title */
-  }
-  
-  label {
-    position: absolute;
-    transform: translateY(6px);
-    left: 13px;
-    color: rgba(113, 34, 5, 0.5); 
-    transition: all 0.25s ease;
-    pointer-events: none;
-    font-size: 22px;
-  }
-  
-  label .req {
-    margin: 2px;
-    color: rgb(255, 91, 37); 
-  }
-  
-  label.active {
-    transform: translateY(-16px);
-    left: 2px;
-    font-size: 10px;
-    border-left: 2px solid #ffffff; 
-    border-bottom: 2px solid #ffffff; 
-    padding-left: 5px;
-  }
-  
-  label.active + input {
-    border: none; 
-  }
-  
-  label.active .req {
-    opacity: 0;
-  }
-  
-  label.highlight {
-    color: #ffffff; 
-  }
-  
-  input,
-  textarea {
-    font-size: 22px;
-    display: block;
-    width: 100%;
-    height: 100%;
-    padding: 5px 5px;
-    background: none;
-    border: 1px solid rgb(113, 34, 5); 
-    color: rgb(113, 34, 5); 
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  }
-  
-  input:focus,
-  textarea:focus {
-    outline: 0;
-    border-color: rgb(255, 91, 37); 
-  }
-  
-  textarea {
-    border: 2px solid rgb(113, 34, 5); 
-    resize: vertical;
-  }
-  
-  .field-wrap {
-    position: relative;
-    margin-bottom: 15px;
-  }
-  
-
-.button {
-    border: 10px;
-    outline: none;
-    padding: 15px 15px;
-    font-size: 2rem;
-    font-weight: 600; /* $bold */
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    background-color: rgb(213, 163, 93);
-    color: rgb(113, 34, 5);
-    border-radius: 15px; /* Rounded borders */
-    box-shadow: 
-      0 0 0 5px rgb(232, 41, 12), /* First layer */
-      0 0 0 10px rgb(113, 34, 5); /* Second layer */
-    transition: all 0.5s ease;
-    display: block;
-    margin: 20px auto 20px auto;
-    text-align: center; 
+  font-family: 'Alkaline Regular';
+  src: url("../site-fonts/AlkalineTest-Regular-BF676e1b6ca889c.otf") format('opentype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-.button:hover,
-.button:focus {
+body {
+  background: rgb(255, 226, 188);
+  font-family: 'Courier New', monospace;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Alkaline Regular', sans-serif;
+  color: rgb(113, 34, 5);
+}
+
+.border-style {
+  border-radius: 15px;
+  border: 5px solid rgb(255, 91, 37);
+  box-shadow: 
+      0 0 0 5px rgb(232, 41, 12),
+      0 0 0 10px rgb(113, 34, 5);
+}
+
+button {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: rgb(213, 163, 93);
+  color: rgb(113, 34, 5);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 5px solid rgb(255, 91, 37);
+  border-radius: 15px;
+  box-shadow: 
+      0 0 0 5px rgb(232, 41, 12),
+      0 0 0 10px rgb(113, 34, 5);
+}
+
+button:hover {
   background-color: rgb(229, 103, 23);
-    color: black
+  color: black;
 }
 
-.button-block {
-    margin-bottom: 15px;
-    margin-top: 40px;
-    display: block;
-    width: 50%;
+input, textarea {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  border: 1px solid rgb(113, 34, 5);
+  padding: 5px;
+  color: rgb(113, 34, 5);
+  background: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
-  
-  .forgot {
-    margin-top: -20px;
-    text-align: right;
-  }
-  
-  .forgot a {
-    text-decoration: none;
-    color: rgb(113, 34, 5); 
-    transition: 1.0s ease;
-    border: 2px solid rgb(255, 91, 37); 
-    border-radius: 15px; 
-    padding: 5px 10px; 
-  }
-  
-  .forgot a:hover {
-    color: rgb(229, 103, 23); 
-  }
-  
-  *,
-  *:before,
-  *:after {
-    box-sizing: border-box;
-  }
-  
-  html {
-    overflow-y: scroll;
-  }
 
-.logo-container {
-  position: absolute;
-  top: 20px;
+input:focus, textarea:focus {
+  outline: none;
+  border-color: rgb(255, 91, 37);
+}
+
+a {
+  text-decoration: none;
+  color: rgb(113, 34, 5);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: rgb(229, 103, 23);
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+.bottom-left-container {
+  position: fixed;
+  bottom: 20px;
   left: 20px;
-}
-
-.landing-logo {
-  width: 600px; 
-  height: auto;
-}
-
-.menu-container {
-  position: absolute;
-  top: 300px;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 30px;
-  margin-top: 0;
-  padding-left: 20px;
-  height: auto;
-}
-
-.menu-container button, 
-.menu-container a {
-  width: auto; 
-  padding: 10px 15px; 
-  display: inline-block; 
+  z-index: 1000; 
 }
