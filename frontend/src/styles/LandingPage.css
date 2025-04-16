@@ -22,9 +22,11 @@
 .menu-container {
   display: flex;
   flex-direction: column; 
-  gap: 30px;
+  padding: 30px;
+  gap: 100px;
 }
 
 .button {
-  width: 200px;
+  width: 300px;
+  font-size: 24px;
 }

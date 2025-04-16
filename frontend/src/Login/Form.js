@@ -65,7 +65,6 @@ function Form() {
     });
 
     if (response.ok) {
-      alert("Login successful!");
       navigate("/landing");
     } else {
       const responseText = await response.text();
