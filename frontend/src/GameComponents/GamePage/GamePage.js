@@ -200,7 +200,6 @@ function GamePage() {
           <button className="button" onClick={() => handleDifficultyChange(1)}>Easy</button>
           <button className="button" onClick={() => handleDifficultyChange(2)}>Medium</button>
           <button className="button" onClick={() => handleDifficultyChange(3)}>Hard</button>
-          <button className="button" onClick={() => handleDifficultyChange(4)}>Extreme</button>
         </div>
       </div>
     );
@@ -215,7 +214,7 @@ function GamePage() {
         <div>
           <h2>Change Difficulty:</h2>
           <div className="difficulty-buttons-container">
-            <button
+          <button
               onClick={() => handleDifficultyChange(1)}
               className={`button ${difficulty === 1 ? "highlighted" : ""}`}
             >
@@ -229,15 +228,9 @@ function GamePage() {
             </button>
             <button
               onClick={() => handleDifficultyChange(3)}
-              className={`button ${difficulty === 3 ? "highlighted" : ""}`}
+              className={`button ${difficulty === 6 ? "highlighted" : ""}`}
             >
               Hard
-            </button>
-            <button
-              onClick={() => handleDifficultyChange(4)}
-              className={`button ${difficulty === 4 ? "highlighted" : ""}`}
-            >
-              Extreme
             </button>
           </div>
         </div>
