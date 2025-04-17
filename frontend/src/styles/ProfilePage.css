@@ -1,0 +1,78 @@
+.profile-page {
+  display: flex;
+  flex-direction: row; 
+  align-items: flex-start; 
+  justify-content: flex-start;
+  padding: 20px;
+  font-family: 'Courier New', monospace;
+}
+
+.profile-page h1 {
+  font-size: 36px;
+  color: rgb(113, 34, 5);
+  margin-bottom: 20px;
+}
+
+.profile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin-right: 40px; 
+  width: 200px; 
+}
+
+.profile-menu .button {
+  width: 100%; 
+  padding: 10px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.profile-form {
+  flex: 1; 
+  max-width: 500px;
+  background-color: rgb(213, 163, 93);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-page .field-wrap {
+  margin-bottom: 15px;
+}
+
+.profile-page .field-wrap label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 18px;
+  color: rgb(113, 34, 5);
+}
+
+.profile-page .field-wrap input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid rgb(113, 34, 5);
+  border-radius: 5px;
+}
+
+.profile-page .message {
+  margin-top: 10px;
+  color: rgb(113, 34, 5);
+}
+
+.profile-page .bottom-left-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+}
+
+.cancel-button {
+  background-color: rgb(255, 91, 37);
+  color: white;
+  margin-top: 10px;
+}
+
+.cancel-button:hover {
+  background-color: rgb(229, 103, 23);
+}

@@ -47,16 +47,6 @@ button:hover {
   color: black;
 }
 
-input, textarea {
-  font-family: 'Courier New', monospace;
-  font-size: 1rem;
-  border: 1px solid rgb(113, 34, 5);
-  padding: 5px;
-  color: rgb(113, 34, 5);
-  background: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
 input:focus, textarea:focus {
   outline: none;
   border-color: rgb(255, 91, 37);
