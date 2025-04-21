@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "/static/css/main.03d4841d.css",
+    "main.js": "/static/js/main.b7499b4b.js",
+    "static/js/885.f295da13.chunk.js": "/static/js/885.f295da13.chunk.js",
+    "static/js/453.80304955.chunk.js": "/static/js/453.80304955.chunk.js",
+    "static/media/tree-layer-behind.png": "/static/media/tree-layer-behind.5481ac55c484115c6326.png",
+    "static/media/sunset-background.png": "/static/media/sunset-background.633eea4fa5af8d993e40.png",
+    "static/media/mountains.png": "/static/media/mountains.bb30ea18ee8000e8d7be.png",
+    "static/media/tree-layer-front.png": "/static/media/tree-layer-front.ae4f11adc21bce181c89.png",
+    "static/media/MRLogo.png": "/static/media/MRLogo.91dce916305c7cc9d23e.png",
+    "static/media/clouds-B.png": "/static/media/clouds-B.3efda19e247fef2c2797.png",
+    "static/media/tree-layer-background.png": "/static/media/tree-layer-background.ee0f83060691b683e353.png",
+    "static/media/clouds-A.png": "/static/media/clouds-A.b4bf340e5bcff53b1b7d.png",
+    "static/media/car.png": "/static/media/car.cd85b818c45e0d857a56.png",
+    "static/media/sun.png": "/static/media/sun.2247d0b3c83177822043.png",
+    "static/media/road.png": "/static/media/road.62f28f22f91973acfd05.png",
+    "static/media/ground.png": "/static/media/ground.50bd1a3b333d81ff9cff.png",
+    "static/media/AlkalineTest-Regular-BF676e1b6ca889c.otf": "/static/media/AlkalineTest-Regular-BF676e1b6ca889c.61af9fe9f394fef43478.otf",
+    "static/media/click-sound.mp3": "/static/media/click-sound.3b46515ff97bef7f602f.mp3",
+    "index.html": "/index.html",
+    "main.03d4841d.css.map": "/static/css/main.03d4841d.css.map",
+    "main.b7499b4b.js.map": "/static/js/main.b7499b4b.js.map",
+    "885.f295da13.chunk.js.map": "/static/js/885.f295da13.chunk.js.map",
+    "453.80304955.chunk.js.map": "/static/js/453.80304955.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.03d4841d.css",
+    "static/js/main.b7499b4b.js"
+  ]
+}
