@@ -41,3 +41,14 @@ h2 {
   gap: 40px; 
   margin-top: 40px;
 }
+
+.highlighted {
+  background-color: rgb(255, 91, 37); 
+  color: white; 
+  border: 3px solid rgb(232, 41, 12);
+  box-shadow: 0 0 10px rgba(255, 91, 37, 0.8); 
+}
+
+.highlighted:hover {
+  background-color: rgb(229, 103, 23); 
+}

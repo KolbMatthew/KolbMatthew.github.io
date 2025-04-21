@@ -11,7 +11,7 @@ function GamePage() {
   const [score, setScore] = useState(0);
   const [questionsInSet] = useState(10);
   const [gameOver, setGameOver] = useState(false);
-  const [difficulty, setDifficulty] = useState(1);
+  const [difficulty, setDifficulty] = useState(null);
   const [showDifficultySelection, setShowDifficultySelection] = useState(true);
   const [timeLeft, setTimeLeft] = useState(60000);
   const [showWinMessage, setShowWinMessage] = useState(false); 
@@ -199,9 +199,24 @@ function GamePage() {
       <div>
         <h2>Select Difficulty:</h2>
         <div className="difficulty-buttons-container">
-          <button className="button" onClick={() => handleDifficultyChange(1)}>Easy</button>
-          <button className="button" onClick={() => handleDifficultyChange(2)}>Medium</button>
-          <button className="button" onClick={() => handleDifficultyChange(3)}>Hard</button>
+          <button
+            onClick={() => handleDifficultyChange(1)}
+            className={`button ${difficulty === 1 ? "highlighted" : ""}`}
+          >
+            Easy
+          </button>
+          <button
+            onClick={() => handleDifficultyChange(2)}
+            className={`button ${difficulty === 2 ? "highlighted" : ""}`}
+          >
+            Medium
+          </button>
+          <button
+            onClick={() => handleDifficultyChange(3)}
+            className={`button ${difficulty === 3 ? "highlighted" : ""}`} // Fixed condition
+          >
+            Hard
+          </button>
         </div>
         <div className="bottom-left-container">
           <button className="button" onClick={() => navigate("/landing")}>
@@ -235,7 +250,7 @@ function GamePage() {
             </button>
             <button
               onClick={() => handleDifficultyChange(3)}
-              className={`button ${difficulty === 6 ? "highlighted" : ""}`}
+              className={`button ${difficulty === 3 ? "highlighted" : ""}`} // Fixed condition
             >
               Hard
             </button>

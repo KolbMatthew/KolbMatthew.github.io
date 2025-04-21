@@ -42,7 +42,7 @@ function Form() {
         password: "",
         password2: "",
       });
-      navigate("/login");
+      navigate("/landing"); 
     } else {
       alert(`Error: ${responseText}`);
     }
