@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 import "../styles/global.css";
 import "../styles/ScoresPage.css";
+import ButtonWithSound from "../components/ButtonWithSound";
+
 
 function ScoresPage() {
   const [scores, setScores] = useState([]);
@@ -65,9 +67,9 @@ function ScoresPage() {
         </div>
       )}
       <div className="bottom-left-container">
-        <button className="button" onClick={() => navigate("/landing")}>
+        <ButtonWithSound className="button" onClick={() => navigate("/landing")}>
           Return to Home Page
-        </button>
+        </ButtonWithSound>
       </div>
     </div>
   );

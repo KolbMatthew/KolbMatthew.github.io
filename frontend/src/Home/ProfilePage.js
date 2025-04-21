@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
 import "../styles/ProfilePage.css";
+import ButtonWithSound from "../components/ButtonWithSound";
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -92,15 +93,15 @@ function ProfilePage() {
   return (
     <div className="profile-page">
       <div className="profile-menu">
-        <button className="button" onClick={() => setActiveForm("username")}>
+        <ButtonWithSound className="button" onClick={() => setActiveForm("username")}>
           Change Username
-        </button>
-        <button className="button" onClick={() => setActiveForm("email")}>
+        </ButtonWithSound>
+        <ButtonWithSound className="button" onClick={() => setActiveForm("email")}>
           Change Email
-        </button>
-        <button className="button" onClick={() => setActiveForm("password")}>
+        </ButtonWithSound>
+        <ButtonWithSound className="button" onClick={() => setActiveForm("password")}>
           Change Password
-        </button>
+        </ButtonWithSound>
       </div>
       {activeForm && (
         <form className="profile-form" onSubmit={handleSubmit}>
@@ -148,23 +149,23 @@ function ProfilePage() {
               </div>
             </>
           )}
-          <button type="submit" className="button button-block">
+          <ButtonWithSound type="submit" className="button button-block">
             Update {activeForm.charAt(0).toUpperCase() + activeForm.slice(1)}
-          </button>
-          <button
+          </ButtonWithSound>
+          <ButtonWithSound
             type="button"
             className="button button-block cancel-button"
             onClick={() => setActiveForm(null)}
           >
             Cancel
-          </button>
+          </ButtonWithSound>
         </form>
       )}
       {message && <p className="message">{message}</p>}
       <div className="bottom-left-container">
-        <button className="button" onClick={() => navigate("/landing")}>
+        <ButtonWithSound className="button" onClick={() => navigate("/landing")}>
           Return to Home Page
-        </button>
+        </ButtonWithSound>
       </div>
     </div>
   );

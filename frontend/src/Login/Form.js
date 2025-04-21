@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Form.css";
 import "../styles/global.css";
+import ButtonWithSound from "../components/ButtonWithSound";
+
 
 function Form() {
   const navigate = useNavigate();
@@ -96,20 +98,20 @@ function Form() {
     <div className="form border-style">
       <ul className="tab-group">
         <li className={`tab ${activeTab === "signup" ? "active" : ""}`}>
-          <button
+          <ButtonWithSound
             className="button"
             onClick={() => handleTabClick("signup")}
           >
             Sign Up
-          </button>
+          </ButtonWithSound>
         </li>
         <li className={`tab ${activeTab === "login" ? "active" : ""}`}>
-          <button
+          <ButtonWithSound
             className="button"
             onClick={() => handleTabClick("login")}
           >
             Log In
-          </button>
+          </ButtonWithSound>
         </li>
       </ul>
 
@@ -200,9 +202,9 @@ function Form() {
               />
             </div>
 
-            <button type="submit" className="button button-block">
+            <ButtonWithSound type="submit" className="button button-block">
               Sign Up
-            </button>
+            </ButtonWithSound>
           </form>
         </div>
 
@@ -243,9 +245,9 @@ function Form() {
               />
             </div>
 
-            <button type="submit" className="button button-block">
+            <ButtonWithSound type="submit" className="button button-block">
               Log In
-            </button>
+            </ButtonWithSound>
           </form>
         </div>
       </div>

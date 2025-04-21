@@ -2,6 +2,8 @@ import GameCanvas from "../GameCanvas/GameCanvas";
 import Option from "../Option/Option";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
+import useSound from 'use-sound';
+import clickSound from '../../sounds/click-sound.mp3';
 import "../../styles/global.css";
 import "../../styles/GamePage.css";
 
@@ -17,8 +19,9 @@ function GamePage() {
   const [showWinMessage, setShowWinMessage] = useState(false); 
   const [isCorrect, setIsCorrect] = useState(null);
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
-  const userID = localStorage.getItem("userID"); // Example user ID. need to figure out how to dynamically set userID -Kyle
+  const userID = localStorage.getItem("userID");
   const navigate = useNavigate();
+  const [playClickSound] = useSound(clickSound);
 
   // Fetch questions from backend
   useEffect(() => {
@@ -59,7 +62,6 @@ function GamePage() {
     if (activeQuestionIndex < questions.length - 1) {
       setActiveQuestionIndex(activeQuestionIndex + 1);
     } else {
-      // Calculate additional points based on remaining time
       const additionalPoints = Math.floor(timeLeft / 1000); // 1 point per second left
       setScore((prevScore) => prevScore + additionalPoints);
       setShowWinMessage(true); // Show win message
@@ -81,6 +83,7 @@ function GamePage() {
 
   // Handle option click
   const handleOptionClick = (value) => {
+    playClickSound(); // Play sound
     if (value === activeQuestion.correctAnswer) {
       setScore(score + 10);
       setIsCorrect(true);
@@ -93,6 +96,7 @@ function GamePage() {
 
   // Handle continue button and difficulty selection
   const handleContinue = () => {
+    playClickSound(); // Play sound
     setActiveQuestionIndex(0);
     setScore(0);
     setGameOver(false);
@@ -117,6 +121,7 @@ function GamePage() {
 
   // Handle Difficulty selection
   const handleDifficultyChange = (newDifficulty) => {
+    playClickSound(); // Play sound
     setDifficulty(newDifficulty);
     setActiveQuestionIndex(0); // Reset active question index
     setShowDifficultySelection(false);
@@ -152,10 +157,12 @@ function GamePage() {
 
   // Debug functions
   const handleDebugCorrect = () => {
+    playClickSound(); // Play sound
     handleOptionClick(activeQuestion.correctAnswer);
   };
 
   const handleDebugIncorrect = () => {
+    playClickSound(); // Play sound
     const incorrectOption = options.find(option => option !== activeQuestion.correctAnswer);
     handleOptionClick(incorrectOption);
   };
@@ -213,13 +220,19 @@ function GamePage() {
           </button>
           <button
             onClick={() => handleDifficultyChange(3)}
-            className={`button ${difficulty === 3 ? "highlighted" : ""}`} // Fixed condition
+            className={`button ${difficulty === 3 ? "highlighted" : ""}`}
           >
             Hard
           </button>
         </div>
         <div className="bottom-left-container">
-          <button className="button" onClick={() => navigate("/landing")}>
+          <button
+            className="button"
+            onClick={() => {
+              playClickSound(); // Play sound
+              navigate("/landing");
+            }}
+          >
             Return to Home Page
           </button>
         </div>
@@ -232,7 +245,15 @@ function GamePage() {
     return (
       <div>
         <h2>Your score: {score}</h2>
-        <button className="button" onClick={handleContinue}>Continue</button>
+        <button
+          className="button"
+          onClick={() => {
+            playClickSound(); // Play sound
+            handleContinue();
+          }}
+        >
+          Continue
+        </button>
         <div>
           <h2>Change Difficulty:</h2>
           <div className="difficulty-buttons-container">
@@ -250,14 +271,20 @@ function GamePage() {
             </button>
             <button
               onClick={() => handleDifficultyChange(3)}
-              className={`button ${difficulty === 3 ? "highlighted" : ""}`} // Fixed condition
+              className={`button ${difficulty === 3 ? "highlighted" : ""}`}
             >
               Hard
             </button>
           </div>
         </div>
         <div className="bottom-left-container">
-          <button className="button" onClick={() => navigate("/landing")}>
+          <button
+            className="button"
+            onClick={() => {
+              playClickSound(); // Play sound
+              navigate("/landing");
+            }}
+          >
             Return to Home
           </button>
         </div>
@@ -284,15 +311,33 @@ function GamePage() {
         timeLeft={timeLeft}
       />
       <div className="debug-buttons-container">
-        <button className="button" onClick={handleDebugCorrect}>
+        <button
+          className="button"
+          onClick={() => {
+            playClickSound(); // Play sound
+            handleDebugCorrect();
+          }}
+        >
           Get Correct Answer
         </button>
-        <button className="button" onClick={handleDebugIncorrect}>
+        <button
+          className="button"
+          onClick={() => {
+            playClickSound(); // Play sound
+            handleDebugIncorrect();
+          }}
+        >
           Get Incorrect Answer
         </button>
       </div>
       <div className="bottom-left-container">
-        <button className="button" onClick={() => navigate("/landing")}>
+        <button
+          className="button"
+          onClick={() => {
+            playClickSound(); // Play sound
+            navigate("/landing");
+          }}
+        >
           Return to Home
         </button>
       </div>
