@@ -16,19 +16,25 @@ label {
   position: absolute;
   transform: translateY(6px);
   left: 13px;
-  color: rgba(113, 34, 5, 0.5);
+  color: rgba(0, 0, 0, 0.5);
   transition: all 0.25s ease;
   pointer-events: none;
-  font-size: 22px;
+  font-size: 28px;
+  line-height: 1.5;
+  text-align: Left; 
+  width: calc(100% - 26px); 
+
 }
 
 label.active {
   transform: translateY(-16px);
   left: 2px;
-  font-size: 10px;
+  font-size: 14px;
   border-left: 2px solid #ffffff;
   border-bottom: 2px solid #ffffff;
   padding-left: 5px;
+  line-height: normal; 
+  text-align: left; 
 }
 
 label.active + input {
@@ -37,7 +43,7 @@ label.active + input {
 
 input, textarea {
   font-family: 'Courier New', monospace;
-  font-size: 1rem;
+  font-size: 30px;
   border: 1px solid rgb(113, 34, 5);
   padding: 5px;
   color: rgb(113, 34, 5);

@@ -3,6 +3,9 @@ package dev._0.mindracers.game;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,5 +80,21 @@ public class GameScoreController {
         }
 
         return ResponseEntity.ok(user.get().getGames()); // Fetch scores for the specific user
+    }
+
+    @GetMapping("/leaderboard")
+    public ResponseEntity<List<Map<String, Object>>> getLeaderboard() {
+        List<Map<String, Object>> leaderboard = new ArrayList<>();
+
+        userRepository.findAll().forEach(user -> {
+            Map<String, Object> userScore = new HashMap<>();
+            userScore.put("username", user.getUsername());
+            userScore.put("totalScore", user.getGames().stream().mapToInt(Game::getScore).sum());
+            leaderboard.add(userScore);
+        });
+
+        leaderboard.sort((a, b) -> (int) b.get("totalScore") - (int) a.get("totalScore")); // Sort by totalScore descending
+
+        return ResponseEntity.ok(leaderboard);
     }
 }

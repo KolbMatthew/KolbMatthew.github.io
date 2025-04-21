@@ -120,7 +120,7 @@ function GameCanvas({
     racecarPositionX.current = lerp(
       racecarPositionX.current,
       targetPositionX.current,
-      0.02
+      0.005
     );
   }, [activeQuestionIndex, questionsInSet]);
 
