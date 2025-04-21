@@ -1,6 +1,6 @@
 .landing-page {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
   padding: 20px;
   height: 100vh;
@@ -8,12 +8,12 @@
 }
 
 .logo-container {
-    margin-bottom: 20px;
-
+  margin-bottom: 20px;
 }
+
 .landing-logo {
   margin-left: 0;
-  width: 600px; 
+  width: 600px;
   height: auto;
 }
 
@@ -22,20 +22,18 @@
   flex-direction: column;
   padding: 30px;
   gap: 20px;
-}
-
-.button {
-  width: 300px;
-  font-size: 24px;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .options-container {
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  width: 300px;
+  background-color: #ffddce;
   animation: fadeIn 0.3s ease-in-out;
+  margin-top: 20px;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column; 
+  gap: 15px;
 }
 
 .options-container h2 {
@@ -43,14 +41,32 @@
 }
 
 .options-container .button {
-  margin-bottom: 10px;
+  margin-bottom: 0; 
 }
 
 .navigation-stack {
   display: flex;
   flex-direction: row;
-  gap: 20px; /* Add spacing between menus */
+  gap: 30px;
   align-items: flex-start;
+}
+
+.wide-container {
+  width: 200%; 
+}
+
+.total-score-container {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #ffd9b3;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.total-score-container h3 {
+  font-size: 24px;
+  color: #713405;
+  margin: 0;
 }
 
 @keyframes fadeIn {

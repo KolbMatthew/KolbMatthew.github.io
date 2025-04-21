@@ -1,7 +1,6 @@
 import GameCanvas from "../GameCanvas/GameCanvas";
-import Option from "../Option/Option";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate, useLocation } from "react-router-dom"; 
 import useSound from 'use-sound';
 import clickSound from '../../sounds/click-sound.mp3';
 import "../../styles/global.css";
@@ -13,23 +12,25 @@ function GamePage() {
   const [score, setScore] = useState(0);
   const [questionsInSet] = useState(10);
   const [gameOver, setGameOver] = useState(false);
-  const [difficulty, setDifficulty] = useState(null);
-  const [showDifficultySelection, setShowDifficultySelection] = useState(true);
   const [timeLeft, setTimeLeft] = useState(60000);
   const [showWinMessage, setShowWinMessage] = useState(false); 
   const [isCorrect, setIsCorrect] = useState(null);
-  const [speedMultiplier, setSpeedMultiplier] = useState(1);
+  const [speedMultiplier, setSpeedMultiplier] = useState(1); // Default speed multiplier
   const userID = localStorage.getItem("userID");
   const navigate = useNavigate();
+  const location = useLocation();
+  const difficulty = location.state?.difficulty || 1; // Default to 1 if not provided
   const [playClickSound] = useSound(clickSound);
+
+  console.log("Difficulty received:", difficulty);
 
   // Fetch questions from backend
   useEffect(() => {
-    console.log(`Fetching ${questionsInSet} questions with difficulty ${difficulty}`);
-    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
+    console.log(`Starting game with difficulty: ${difficulty}`);
+    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=10`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
     })
       .then((response) => response.json())
@@ -38,10 +39,8 @@ function GamePage() {
         setQuestions(data);
         setActiveQuestionIndex(0); // Reset active question index
       })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }, [difficulty, questionsInSet]);
+      .catch((err) => console.error("Error fetching questions:", err));
+  }, [difficulty]);
 
   // Timer effect
   useEffect(() => {
@@ -91,83 +90,18 @@ function GamePage() {
     } else {
       setIsCorrect(false);
       setScore(score - 10);
+      setSpeedMultiplier((prev) => Math.max(prev - 0.2, 0.5)); // Reduce speed multiplier, minimum 0.5
     }
   };
 
-  // Handle continue button and difficulty selection
-  const handleContinue = () => {
-    playClickSound(); // Play sound
-    setActiveQuestionIndex(0);
-    setScore(0);
-    setGameOver(false);
-    setShowWinMessage(false);
-    setTimeLeft(60000);
-    setSpeedMultiplier(1); // Reset speed multiplier
-    fetch(`http://localhost:8080/game/getProblems?difficulty=${difficulty}&count=${questionsInSet}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setQuestions(data);
-        setActiveQuestionIndex(0);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+  // Simulate getting the answer wrong (debug button)
+  const simulateWrongAnswer = () => {
+    setIsCorrect(false);
+    setScore((prevScore) => prevScore - 10);
+    setSpeedMultiplier((prev) => Math.max(prev - 0.2, 0.5)); // Reduce speed multiplier, minimum 0.5
   };
 
-  // Handle Difficulty selection
-  const handleDifficultyChange = (newDifficulty) => {
-    playClickSound(); // Play sound
-    setDifficulty(newDifficulty);
-    setActiveQuestionIndex(0); // Reset active question index
-    setShowDifficultySelection(false);
-  };
-
-  const formatTime = (time) => {
-    const seconds = Math.floor(time / 1000);
-    const milliseconds = Math.floor((time % 1000) / 10);
-    return `${seconds}.${milliseconds.toString().padStart(2, '0')}`;
-  };
-
-  useEffect(() => {
-    if (isCorrect === null) return;
-
-    if (isCorrect) {
-      // Increase speed
-      setSpeedMultiplier((prev) => {
-        const newMultiplier = prev + 0.05;
-        console.log(`Speed multiplier increased to ${newMultiplier} (correct).`);
-        return newMultiplier;
-      });
-    } else {
-      // Decrease speed
-      setSpeedMultiplier((prev) => {
-        const newMultiplier = Math.max(0.5, prev - 1);
-        console.log(`Speed multiplier decreased to ${newMultiplier} (incorrect).`);
-        return newMultiplier;
-      });
-    }
-    setIsCorrect(null);
-  }, [isCorrect]);
-
-
-  // Debug functions
-  const handleDebugCorrect = () => {
-    playClickSound(); // Play sound
-    handleOptionClick(activeQuestion.correctAnswer);
-  };
-
-  const handleDebugIncorrect = () => {
-    playClickSound(); // Play sound
-    const incorrectOption = options.find(option => option !== activeQuestion.correctAnswer);
-    handleOptionClick(incorrectOption);
-  };
-
-  // saveScore function
+  // Save score when the game is over
   const saveScore = async () => {
     const gameDate = new Date().toISOString();
 
@@ -178,119 +112,30 @@ function GamePage() {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          score: score.toString(), // Convert score to a string
-          userID: userID.toString(), // Convert userID to a string
-          gameDate: gameDate, // Use ISO string format for date
+          score: score.toString(),
+          userID: userID.toString(),
+          gameDate: gameDate,
         }),
       });
 
       if (response.ok) {
         console.log('Score saved successfully!');
       } else {
-        console.error('Failed to save score:');
+        console.error('Failed to save score.');
       }
     } catch (error) {
       console.error('Error while saving score:', error);
     }
   };
 
-  // Call saveScore when gameOver is true
   useEffect(() => {
     if (gameOver) {
       saveScore();
+      setTimeout(() => {
+        navigate("/game-over", { state: { score } });
+      }, 3000); // 3-second delay before redirecting
     }
   }, [gameOver]);
-
-  if (showDifficultySelection) {
-    return (
-      <div>
-        <h2>Select Difficulty:</h2>
-        <div className="difficulty-buttons-container">
-          <button
-            onClick={() => handleDifficultyChange(1)}
-            className={`button ${difficulty === 1 ? "highlighted" : ""}`}
-          >
-            Easy
-          </button>
-          <button
-            onClick={() => handleDifficultyChange(2)}
-            className={`button ${difficulty === 2 ? "highlighted" : ""}`}
-          >
-            Medium
-          </button>
-          <button
-            onClick={() => handleDifficultyChange(3)}
-            className={`button ${difficulty === 3 ? "highlighted" : ""}`}
-          >
-            Hard
-          </button>
-        </div>
-        <div className="bottom-left-container">
-          <button
-            className="button"
-            onClick={() => {
-              playClickSound(); // Play sound
-              navigate("/landing");
-            }}
-          >
-            Return to Home Page
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Once user has answered all questions, display score and continue button
-  if (gameOver) {
-    return (
-      <div>
-        <h2>Your score: {score}</h2>
-        <button
-          className="button"
-          onClick={() => {
-            playClickSound(); // Play sound
-            handleContinue();
-          }}
-        >
-          Continue
-        </button>
-        <div>
-          <h2>Change Difficulty:</h2>
-          <div className="difficulty-buttons-container">
-            <button
-              onClick={() => handleDifficultyChange(1)}
-              className={`button ${difficulty === 1 ? "highlighted" : ""}`}
-            >
-              Easy
-            </button>
-            <button
-              onClick={() => handleDifficultyChange(2)}
-              className={`button ${difficulty === 2 ? "highlighted" : ""}`}
-            >
-              Medium
-            </button>
-            <button
-              onClick={() => handleDifficultyChange(3)}
-              className={`button ${difficulty === 3 ? "highlighted" : ""}`}
-            >
-              Hard
-            </button>
-          </div>
-        </div>
-        <div className="bottom-left-container">
-          <button
-            className="button"
-            onClick={() => {
-              playClickSound(); // Play sound
-              navigate("/landing");
-            }}
-          >
-            Return to Home
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   // Check if questions are loaded before rendering GameCanvas
   if (questions.length === 0) {
@@ -310,34 +155,18 @@ function GamePage() {
         speedMultiplier={speedMultiplier}
         timeLeft={timeLeft}
       />
+      {/* Debug Buttons */}
       <div className="debug-buttons-container">
-        <button
-          className="button"
-          onClick={() => {
-            playClickSound(); // Play sound
-            handleDebugCorrect();
-          }}
-        >
-          Get Correct Answer
+        <button className="button" onClick={nextQuestion}>
+          Simulate Right Answer
         </button>
-        <button
-          className="button"
-          onClick={() => {
-            playClickSound(); // Play sound
-            handleDebugIncorrect();
-          }}
-        >
-          Get Incorrect Answer
+        <button className="button" onClick={simulateWrongAnswer}>
+          Simulate Wrong Answer
         </button>
-      </div>
-      <div className="bottom-left-container">
-        <button
-          className="button"
-          onClick={() => {
-            playClickSound(); // Play sound
-            navigate("/landing");
-          }}
-        >
+        <button className="button" onClick={() => setGameOver(true)}>
+          End Game
+        </button>
+        <button className="button" onClick={() => navigate("/landing")}>
           Return to Home
         </button>
       </div>
