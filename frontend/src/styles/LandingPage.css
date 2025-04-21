@@ -1,8 +1,6 @@
-
-  
 .landing-page {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
   padding: 20px;
   height: 100vh;
@@ -21,12 +19,47 @@
 
 .menu-container {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   padding: 30px;
-  gap: 100px;
+  gap: 20px;
 }
 
 .button {
   width: 300px;
   font-size: 24px;
+}
+
+.options-container {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  width: 300px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.options-container h2 {
+  margin-bottom: 20px;
+}
+
+.options-container .button {
+  margin-bottom: 10px;
+}
+
+.navigation-stack {
+  display: flex;
+  flex-direction: row;
+  gap: 20px; /* Add spacing between menus */
+  align-items: flex-start;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

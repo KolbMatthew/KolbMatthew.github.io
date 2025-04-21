@@ -33,6 +33,7 @@ button {
   font-weight: bold;
   background-color: rgb(213, 163, 93);
   margin-bottom: 10px;
+  margin-left: 10px;
   color: rgb(113, 34, 5);
   transition: all 0.3s ease;
   cursor: pointer;
