@@ -59,6 +59,13 @@ function LandingPage() {
       return;
     }
 
+    if (menu === "logout") {
+      // Clear user session data and navigate to the login page
+      localStorage.removeItem("userID");
+      navigate("../");
+      return;
+    }
+
     setNavigationStack((prev) => {
       if (menu === "default") return ["default"];
       const parent = parentMap[menu] ?? "default";
