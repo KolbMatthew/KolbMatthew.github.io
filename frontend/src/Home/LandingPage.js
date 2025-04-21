@@ -126,22 +126,23 @@ function LandingPage() {
   };
 
   const validateInput = () => {
-    if (activeForm === "username" && (!formData.username || formData.username.trim().length < 3)) {
-      setMessage("Username must be at least 3 characters long.");
-      return false;
+    if (activeForm === "username") {
+      if (!formData.username || formData.username.trim().length < 3) {
+        setMessage("Username must be at least 3 characters long and cannot be empty.");
+        return false;
+      }
     }
 
-    if (
-      activeForm === "email" &&
-      (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-    ) {
-      setMessage("Please enter a valid email address.");
-      return false;
+    if (activeForm === "email") {
+      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        setMessage("Please enter a valid email address.");
+        return false;
+      }
     }
 
     if (activeForm === "password") {
       if (!formData.password || formData.password.length < 6) {
-        setMessage("Password must be at least 6 characters long.");
+        setMessage("Password must be at least 6 characters long and cannot be empty.");
         return false;
       }
       if (formData.password !== formData.confirmPassword) {
@@ -156,6 +157,13 @@ function LandingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Ensure userID is valid
+    if (!userID) {
+      setMessage("Session expired. Please log in again.");
+      navigate("/login");
+      return;
+    }
+
     if (!validateInput()) {
       return;
     }
@@ -167,7 +175,7 @@ function LandingPage() {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
-          userID: userID,
+          userID: parseInt(userID, 10), // Ensure userID is passed as an integer
           username: activeForm === "username" ? formData.username : undefined,
           email: activeForm === "email" ? formData.email : undefined,
           password: activeForm === "password" ? formData.password : undefined,
